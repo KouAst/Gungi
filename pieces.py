@@ -20,6 +20,9 @@ class Pieces():
     def getImagekey(self):
         return None
     
+    def canMove(self, arr, moveto_x, moveto_y):
+        pass
+    
 class King(Pieces):
     def __init__(self, player, x, y):
         self.player = player
@@ -31,6 +34,16 @@ class King(Pieces):
         else:
             return 'w_king'
         
+    def canmove(self, arr, moveto_x, moveto_y):
+        if self.x == moveto_x and self.y == moveto_y:
+            return False
+        if arr[moveto_x][moveto_y] == self.player:
+            return False
+        move_x = moveto_x - self.x
+        move_y = moveto_y - self.y
+        if abs(move_x) + abs(move_y) == 1:
+            return True
+        
 class Prince(Pieces):
     def __init__(self, player, x, y):
         self.player = player
@@ -41,3 +54,13 @@ class Prince(Pieces):
             return 'b_prince'
         else:
             return 'w_prince'
+        
+def listPiecestoArr(piecesList):
+    arr = [[0 for i in range(9)] for j in range(9)]
+    for i in range(0,9):
+        for j in range(0,9):
+            if len(list(filter(lambda cm: cm.x == i and cm.y == j and cm.player == constants.p1Color,piecesList))):
+                arr[i][j] = constants.p1Color
+            elif len(list(filter(lambda cm: cm.x == i and cm.y == j and cm.player == constants.p2Color,piecesList))):
+                arr[i][j] = constants.p2Color
+    return arr
