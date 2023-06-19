@@ -55,8 +55,16 @@ class gungi():
     def pieceInit(self):
         gungi.piecesList.append(pieces.King(gungi.p1Color, 4, 1))
         gungi.piecesList.append(pieces.King(gungi.p2Color, 4, 9))
-        #gungi.piecesList.append(pieces.Prince(gungi.p1Color, 3, 1))
-        #gungi.piecesList.append(pieces.Prince(gungi.p2Color, 3, 9))
+        gungi.piecesList.append(pieces.Prince(gungi.p1Color, 3, 1))
+        gungi.piecesList.append(pieces.Prince(gungi.p2Color, 3, 9))
+        gungi.piecesList.append(pieces.Duke(gungi.p1Color, 5, 1))
+        gungi.piecesList.append(pieces.Duke(gungi.p2Color, 5, 9))
+        #gungi.piecesList.append(pieces.Spear(gungi.p1Color, 4, 2))
+        #gungi.piecesList.append(pieces.Spear(gungi.p2Color, 4, 8))
+        gungi.piecesList.append(pieces.Shinobi(gungi.p1Color, 1, 2))
+        gungi.piecesList.append(pieces.Shinobi(gungi.p2Color, 1, 8))
+        gungi.piecesList.append(pieces.Shinobi(gungi.p1Color, 7, 2))
+        gungi.piecesList.append(pieces.Shinobi(gungi.p2Color, 7, 8))
 
     def pieceDisplay(self):
         for item in gungi.piecesList:
@@ -76,11 +84,11 @@ class gungi():
                     mouse_y > gungi.Start_Y  and mouse_y < gungi.Max_Y ):
                     if gungi.putDownFlag != gungi.p1Color:
                         return
-                    click_x = round((mouse_x-gungi.Start_X) / constants.board_size)
-                    click_y = round((mouse_y-gungi.Start_Y) / constants.board_size)
-                    click_mod_x = (mouse_x-gungi.Start_X) % constants.board_size
-                    click_mod_y = (mouse_y-gungi.Start_Y) % constants.board_size
-                    if abs(click_mod_x)>=5 and abs(click_mod_y)>=5:
+                    click_x = round((mouse_x-gungi.Start_X) /72) - 1
+                    click_y = round((mouse_y-gungi.Start_Y) /60) - 1
+                    click_mod_x = (mouse_x-gungi.Start_X) % 72 - 1
+                    click_mod_y = (mouse_y-gungi.Start_Y) % 60 - 1
+                    if abs(click_mod_x)>=0 and abs(click_mod_y)>=0:
                         print("Success:x="+str(click_x)+" y="+str(click_y))
                         self.putDownPieces(gungi.p1Color, click_x, click_y)
                 else:
@@ -92,6 +100,9 @@ class gungi():
 
     def putDownPieces(self, t, x, y):
         selectfilter=list(filter(lambda cm: cm.x == x and cm.y == y and cm.player == gungi.p1Color,gungi.piecesList))
+        print(gungi.piecesList)
+        print(selectfilter)
+
         if len(selectfilter):
             gungi.piecesSelected = selectfilter[0]
             return
@@ -99,7 +110,7 @@ class gungi():
         if gungi.piecesSelected:
             print("Selected")
             arr = pieces.listPiecestoArr(gungi.piecesList)
-            if gungi.piecesSelected.canmove(arr, x, y):
+            if gungi.piecesSelected.canMove(arr, x, y):
                 self.piecesMove(gungi.piecesSelected, x, y)
                 gungi.putDownFlag = gungi.p2Color
         else:

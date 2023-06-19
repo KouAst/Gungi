@@ -34,7 +34,7 @@ class King(Pieces):
         else:
             return 'w_king'
         
-    def canmove(self, arr, moveto_x, moveto_y):
+    def canMove(self, arr, moveto_x, moveto_y):
         if self.x == moveto_x and self.y == moveto_y:
             return False
         if arr[moveto_x][moveto_y] == self.player:
@@ -55,6 +55,39 @@ class Prince(Pieces):
         else:
             return 'w_prince'
         
+class Duke(Pieces):
+    def __init__(self, player, x, y):
+        self.player = player
+        super().__init__(player, x, y)
+
+    def getImagekey(self):
+        if self.player == constants.p1Color:
+            return 'b_duke'
+        else:
+            return 'w_duke'    
+
+class Spear(Pieces):
+    def __init__(self, player, x, y):
+        self.player = player
+        super().__init__(player, x, y)
+
+    def getImagekey(self):
+        if self.player == constants.p1Color:
+            return 'b_spear'
+        else:
+            return 'w_spear'     
+
+class Shinobi(Pieces):
+    def __init__(self, player, x, y):
+        self.player = player
+        super().__init__(player, x, y)
+
+    def getImagekey(self):
+        if self.player == constants.p1Color:
+            return 'b_shinobi'
+        else:
+            return 'w_shinobi' 
+
 def listPiecestoArr(piecesList):
     arr = [[0 for i in range(9)] for j in range(9)]
     for i in range(0,9):
