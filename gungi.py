@@ -1,6 +1,7 @@
 import sys
 import pygame
 import time
+import math
 import constants as constants
 import pieces as pieces
 
@@ -53,18 +54,54 @@ class gungi():
                     pygame.draw.rect(self.window, constants.line_color, (x, y, constants.square_size, constants.square_size), 1)
 
     def pieceInit(self):
+        '''
+        測試用 King(帥),Prince(大),Duke(中),Spear(槍),Shinobi(忍),Soldier(兵),Fort(砦),Samurai(侍),Captain(小),Cavalry(馬)
+        '''
+        #gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 4, 2))
+
         gungi.piecesList.append(pieces.King(gungi.p1Color, 4, 1))
-        gungi.piecesList.append(pieces.King(gungi.p2Color, 4, 9))
         gungi.piecesList.append(pieces.Prince(gungi.p1Color, 3, 1))
-        gungi.piecesList.append(pieces.Prince(gungi.p2Color, 3, 9))
         gungi.piecesList.append(pieces.Duke(gungi.p1Color, 5, 1))
-        gungi.piecesList.append(pieces.Duke(gungi.p2Color, 5, 9))
-        #gungi.piecesList.append(pieces.Spear(gungi.p1Color, 4, 2))
-        #gungi.piecesList.append(pieces.Spear(gungi.p2Color, 4, 8))
+        gungi.piecesList.append(pieces.Spear(gungi.p1Color, 4, 2))
         gungi.piecesList.append(pieces.Shinobi(gungi.p1Color, 1, 2))
-        gungi.piecesList.append(pieces.Shinobi(gungi.p2Color, 1, 8))
         gungi.piecesList.append(pieces.Shinobi(gungi.p1Color, 7, 2))
+        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 0, 3))
+        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 4, 3))
+        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 8, 3))
+        gungi.piecesList.append(pieces.Fort(gungi.p1Color, 2, 3))
+        gungi.piecesList.append(pieces.Fort(gungi.p1Color, 6, 3))
+        gungi.piecesList.append(pieces.Samurai(gungi.p1Color, 3, 3))
+        gungi.piecesList.append(pieces.Samurai(gungi.p1Color, 5, 3))
+        #p1備戰區
+        gungi.piecesList.append(pieces.Captain(gungi.p1Color, 0, 0))
+        gungi.piecesList.append(pieces.Captain(gungi.p1Color, 8, 0))
+        gungi.piecesList.append(pieces.Spear(gungi.p1Color, 1, 0))
+        gungi.piecesList.append(pieces.Spear(gungi.p1Color, 7, 0))
+        gungi.piecesList.append(pieces.Cavalry(gungi.p1Color, 2, 0))
+        gungi.piecesList.append(pieces.Cavalry(gungi.p1Color, 6, 0))
+        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 4, 0))
+
+        gungi.piecesList.append(pieces.King(gungi.p2Color, 4, 9))
+        gungi.piecesList.append(pieces.Prince(gungi.p2Color, 3, 9))
+        gungi.piecesList.append(pieces.Duke(gungi.p2Color, 5, 9))
+        gungi.piecesList.append(pieces.Spear(gungi.p2Color, 4, 8))
+        gungi.piecesList.append(pieces.Shinobi(gungi.p2Color, 1, 8))
         gungi.piecesList.append(pieces.Shinobi(gungi.p2Color, 7, 8))
+        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 0, 7))
+        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 4, 7))
+        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 8, 7))
+        gungi.piecesList.append(pieces.Fort(gungi.p2Color, 2, 7))
+        gungi.piecesList.append(pieces.Fort(gungi.p2Color, 6, 7))
+        gungi.piecesList.append(pieces.Samurai(gungi.p2Color, 3, 7))
+        gungi.piecesList.append(pieces.Samurai(gungi.p2Color, 5, 7))
+        #p2備戰區
+        gungi.piecesList.append(pieces.Captain(gungi.p2Color, 0, 10))
+        gungi.piecesList.append(pieces.Captain(gungi.p2Color, 8, 10))
+        gungi.piecesList.append(pieces.Spear(gungi.p2Color, 1, 10))
+        gungi.piecesList.append(pieces.Spear(gungi.p2Color, 7, 10))
+        gungi.piecesList.append(pieces.Cavalry(gungi.p2Color, 2, 10))
+        gungi.piecesList.append(pieces.Cavalry(gungi.p2Color, 6, 10))
+        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 4, 10))
 
     def pieceDisplay(self):
         for item in gungi.piecesList:
@@ -84,12 +121,13 @@ class gungi():
                     mouse_y > gungi.Start_Y  and mouse_y < gungi.Max_Y ):
                     if gungi.putDownFlag != gungi.p1Color:
                         return
-                    click_x = round((mouse_x-gungi.Start_X) /72) - 1
-                    click_y = round((mouse_y-gungi.Start_Y) /60) - 1
-                    click_mod_x = (mouse_x-gungi.Start_X) % 72 - 1
-                    click_mod_y = (mouse_y-gungi.Start_Y) % 60 - 1
+                    click_x = math.floor((mouse_x-gungi.Start_X) /80) 
+                    click_y = math.floor((mouse_y-gungi.Start_Y) /80) 
+                    click_mod_x = (mouse_x-gungi.Start_X) % 80 
+                    click_mod_y = (mouse_y-gungi.Start_Y) % 80
                     if abs(click_mod_x)>=0 and abs(click_mod_y)>=0:
-                        print("Success:x="+str(click_x)+" y="+str(click_y))
+                        print("原始座標:x="+str(mouse_x)+" y="+str(mouse_y))
+                        print("該點為:x="+str(click_x)+" y="+str(click_y))
                         self.putDownPieces(gungi.p1Color, click_x, click_y)
                 else:
                     print("out")
@@ -100,18 +138,18 @@ class gungi():
 
     def putDownPieces(self, t, x, y):
         selectfilter=list(filter(lambda cm: cm.x == x and cm.y == y and cm.player == gungi.p1Color,gungi.piecesList))
-        print(gungi.piecesList)
-        print(selectfilter)
 
         if len(selectfilter):
             gungi.piecesSelected = selectfilter[0]
             return
         
         if gungi.piecesSelected:
-            print("Selected")
+            print("該棋為:" +str(gungi.piecesSelected))
             arr = pieces.listPiecestoArr(gungi.piecesList)
             if gungi.piecesSelected.canMove(arr, x, y):
                 self.piecesMove(gungi.piecesSelected, x, y)
+                #測試用
+                #gungi.putDownFlag = gungi.p1Color
                 gungi.putDownFlag = gungi.p2Color
         else:
             fi = filter(lambda p: p.x == x and p.y == y, gungi.piecesList)
@@ -125,11 +163,11 @@ class gungi():
                 gungi.piecesList.remove(item)
         pieces.x = x
         pieces.y = y
-        print("move to " + str(x) + " " + str(y))
+        print(str(item)+"移動到:" +"x="+str(x) + " y=" + str(y))
         return True
 
     def endGame(self):
-        print("exit")
+        print("關閉")
         exit()
 
 if __name__ == '__main__':
