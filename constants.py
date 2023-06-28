@@ -1,6 +1,6 @@
 import pygame
 
-screen_width = 720
+screen_width = 1440
 screen_height = 880
 start_X = 0
 start_Y = 0
@@ -11,7 +11,9 @@ p2Color = 2
 board_size = 11
 square_size = 80
 board_color = (186, 135, 48)
+table_color = (239,186,97)
 line_color = (0, 0, 0)
+
 
 pieces_images = {
     'w_king': pygame.image.load("pieceImg/King_W.png"),

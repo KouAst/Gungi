@@ -47,6 +47,7 @@ class King(Pieces):
         elif (move_x == -1) and (move_y == 1): return True
         elif (move_x == 1) and (move_y == 1): return True
         
+        
 class Prince(Pieces):
     def __init__(self, player, x, y):
         self.player = player
@@ -71,6 +72,11 @@ class Prince(Pieces):
         elif (move_x == -1) and (move_y == -1): return True
         elif (move_x == -1) and (move_y == 1): return True
         elif (move_x == 1) and (move_y == 1): return True
+        #備戰區進場
+        if self.x < 4 or self.x > 12:
+            if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):
+                if arr[moveto_x][moveto_y] == 0:
+                    return True
 
 class Duke(Pieces):
     def __init__(self, player, x, y):
@@ -92,6 +98,11 @@ class Duke(Pieces):
         move_y = moveto_y - self.y
         if abs(move_x) + abs(move_y) == 1: return True
         elif abs(move_x) == abs(move_y): return True   
+        #備戰區進場
+        if self.x < 4 or self.x > 12:
+            if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):
+                if arr[moveto_x][moveto_y] == 0:
+                    return True
 
 class Spear(Pieces):
     def __init__(self, player, x, y):
@@ -120,7 +131,12 @@ class Spear(Pieces):
             if (move_x == 0) and (abs(move_y) == 1): return True
             elif (move_x == 0) and (move_y == -2): return True
             elif (move_x == 1) and (move_y == -1): return True
-            elif (move_x == -1) and (move_y == -1): return True   
+            elif (move_x == -1) and (move_y == -1): return True  
+        #備戰區進場 
+        if self.x < 4 or self.x > 12:
+            if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):
+                if arr[moveto_x][moveto_y] == 0:
+                    return True
 
 class Shinobi(Pieces):
     def __init__(self, player, x, y):
@@ -142,6 +158,11 @@ class Shinobi(Pieces):
         move_y = moveto_y - self.y
         if abs(move_x) == abs(move_y):
             if (abs(move_x) <= 2) and (abs(move_y) <= 2): return True
+        #備戰區進場
+        if self.x < 4 or self.x > 12:
+            if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):
+                if arr[moveto_x][moveto_y] == 0:
+                    return True
 
 class Soldier(Pieces):
     def __init__(self, player, x, y):
@@ -161,8 +182,13 @@ class Soldier(Pieces):
             return False
         move_x = moveto_x - self.x
         move_y = moveto_y - self.y
-        if (move_x == 0) and (abs(move_y) == 1): return True
-        
+        if (move_x == 0) and (abs(move_y) == 1): 
+            return True
+        #備戰區進場
+        if self.x < 4 or self.x > 12:
+            if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):
+                    if arr[moveto_x][moveto_y] == 0:
+                        return True
 class Fort(Pieces):
     def __init__(self, player, x, y):
         self.player = player
@@ -188,7 +214,12 @@ class Fort(Pieces):
         elif self.player == constants.p2Color:
             if (move_x == 0) and (move_y == -1): return True
             elif (abs(move_x) == 1) and (move_y == 0): return True
-            elif (abs(move_x) == 1) and (move_y == 1): return True  
+            elif (abs(move_x) == 1) and (move_y == 1): return True
+        #備戰區進場
+        if self.x < 4 or self.x > 12:
+            if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):
+                if arr[moveto_x][moveto_y] == 0:
+                    return True
         
 class Samurai(Pieces):
     def __init__(self, player, x, y):
@@ -215,7 +246,12 @@ class Samurai(Pieces):
         elif self.player == constants.p2Color:
             if (move_x == 0) and (abs(move_y) == 1): return True
             elif (move_x == 1) and (move_y == -1): return True
-            elif (move_x == -1) and (move_y == -1): return True   
+            elif (move_x == -1) and (move_y == -1): return True
+        #備戰區進場
+        if self.x < 4 or self.x > 12:
+            if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):
+                if arr[moveto_x][moveto_y] == 0:
+                    return True
 
 class Captain(Pieces):
     def __init__(self, player, x, y):
@@ -243,6 +279,11 @@ class Captain(Pieces):
             if abs(move_x) + abs(move_y) == 1: return True
             elif (move_x == 1) and (move_y == -1): return True
             elif (move_x == -1) and (move_y == -1): return True       
+        #備戰區進場
+        if self.x < 4 or self.x > 12:
+            if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):
+                if arr[moveto_x][moveto_y] == 0:
+                    return True
 
 class Cavalry(Pieces):
     def __init__(self, player, x, y):
@@ -268,10 +309,15 @@ class Cavalry(Pieces):
         elif self.player == constants.p2Color:
             if abs(move_x) + abs(move_y) == 1: return True
             elif (move_x == 0) and (abs(move_y) == 2): return True
+        #備戰區進場
+        if self.x < 4 or self.x > 12:
+            if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):    
+                if arr[moveto_x][moveto_y] == 0:
+                    return True
 
 def listPiecestoArr(piecesList):
-    arr = [[0 for i in range(11)] for j in range(9)]
-    for i in range(0,9):
+    arr = [[0 for i in range(11)] for j in range(16)]
+    for i in range(0,12):
         for j in range(0,11):
             if len(list(filter(lambda cm: cm.x == i and cm.y == j and cm.player == constants.p1Color,piecesList))):
                 arr[i][j] = constants.p1Color
