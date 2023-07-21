@@ -12,8 +12,8 @@ board_size = 11
 square_size = 80
 board_color = (186, 135, 48)
 table_color = (239,186,97)
+choose_color = (15,242,15)
 line_color = (0, 0, 0)
-
 
 pieces_images = {
     'w_king': pygame.image.load("pieceImg/King_W.png"),

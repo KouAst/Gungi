@@ -182,13 +182,16 @@ class Soldier(Pieces):
             return False
         move_x = moveto_x - self.x
         move_y = moveto_y - self.y
-        if (move_x == 0) and (abs(move_y) == 1): 
-            return True
+        if (move_x == 0) and (abs(move_y) == 1): return True
         #備戰區進場
         if self.x < 4 or self.x > 12:
             if (moveto_x < 13 and moveto_y > 0) and (moveto_x > 3 and moveto_y < 10):
-                    if arr[moveto_x][moveto_y] == 0:
-                        return True
+                if arr[moveto_x][moveto_y] == 0:
+                    return True
+        
+        
+
+        
 class Fort(Pieces):
     def __init__(self, player, x, y):
         self.player = player
