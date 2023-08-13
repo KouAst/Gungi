@@ -15,7 +15,7 @@ class gungi():
     Start_Y = constants.start_Y
     Max_X = 1440
     Max_Y = 880
-    putDownFlag = p1Color
+    putDownFlag = p2Color
     piecesSelected = None
     choose_piece = None
     piece_moved = False
@@ -28,6 +28,8 @@ class gungi():
     p1_time_count = 0
     p2_time_count = 0
 
+    piece_prepare = False
+
     piecesList = []
 
     
@@ -36,25 +38,32 @@ class gungi():
     def startGame(self):
         pygame.init()
         gungi.window = pygame.display.set_mode((constants.screen_width,constants.screen_height))#,pygame.FULLSCREEN)
-        pygame.display.set_caption('Gungi')
-        print("黑棋先攻")
+        pygame.display.set_caption('Gungi')        
         self.pieceInit()
+        #while self.piece_prepare==False:
+        print("佈陣階段")
+        self.prepare_time()
         
-        while True:
-            time.sleep(0.1)
-            self.window.fill((100,100,100))
-            
+        print("白棋先攻")   
+        
+        
 
-            self.drawBoard()
-            self.drawpieceTable()
-            self.pieceDisplay()
-            self.Select_rect()
-            #self.victoryDecision()
-            #self.computerPlay()
-            self.getEvent()
-            self.wingame()
-            pygame.display.update()
-            pygame.display.flip()
+        while self.piece_prepare == True:         
+            while True:
+                time.sleep(0.1)
+                self.window.fill((100,100,100))
+        
+
+                self.drawBoard()
+                self.drawpieceTable()
+                self.pieceDisplay()
+                self.Select_rect()
+                #self.victoryDecision()
+                #self.computerPlay()
+                self.getEvent()
+                self.wingame()
+                pygame.display.update()
+                pygame.display.flip()
             
             
 
@@ -88,6 +97,50 @@ class gungi():
         測試用 King(帥),Prince(大),Duke(中),Spear(槍),Shinobi(忍),Soldier(兵),Fort(砦),Samurai(侍),Captain(小),Cavalry(馬)
         '''
         #gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 4, 2))
+        '''
+        gungi.piecesList.append(pieces.King(gungi.p1Color, 8, 1))
+        gungi.piecesList.append(pieces.Prince(gungi.p1Color, 13, 0))
+        gungi.piecesList.append(pieces.Duke(gungi.p1Color, 14, 0))
+        gungi.piecesList.append(pieces.Spear(gungi.p1Color, 15, 0))
+        gungi.piecesList.append(pieces.Shinobi(gungi.p1Color, 16, 0))
+        gungi.piecesList.append(pieces.Shinobi(gungi.p1Color, 13, 1))
+        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 14, 1))
+        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 15, 1))
+        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 16, 1))
+        gungi.piecesList.append(pieces.Fort(gungi.p1Color, 13, 2))
+        gungi.piecesList.append(pieces.Fort(gungi.p1Color, 14, 2))
+        gungi.piecesList.append(pieces.Samurai(gungi.p1Color, 15, 2))
+        gungi.piecesList.append(pieces.Samurai(gungi.p1Color, 16, 2))
+        gungi.piecesList.append(pieces.Captain(gungi.p1Color, 13, 3))
+        gungi.piecesList.append(pieces.Captain(gungi.p1Color, 14, 3))
+        gungi.piecesList.append(pieces.Spear(gungi.p1Color, 15, 3))
+        gungi.piecesList.append(pieces.Spear(gungi.p1Color, 16, 3))
+        gungi.piecesList.append(pieces.Cavalry(gungi.p1Color, 13, 4))
+        gungi.piecesList.append(pieces.Cavalry(gungi.p1Color, 14, 4))
+        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 15, 4))
+        '''
+        #p2
+        gungi.piecesList.append(pieces.King(gungi.p2Color, 8, 9))
+        gungi.piecesList.append(pieces.Prince(gungi.p2Color, 0, 10))
+        gungi.piecesList.append(pieces.Duke(gungi.p2Color, 1, 10))
+        gungi.piecesList.append(pieces.Spear(gungi.p2Color, 2, 10))
+        gungi.piecesList.append(pieces.Shinobi(gungi.p2Color, 3, 10))
+        gungi.piecesList.append(pieces.Shinobi(gungi.p2Color, 0, 9))
+        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 1, 9))
+        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 2,9))
+        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 3, 9))
+        gungi.piecesList.append(pieces.Fort(gungi.p2Color, 0, 8))
+        gungi.piecesList.append(pieces.Fort(gungi.p2Color, 1, 8))
+        gungi.piecesList.append(pieces.Samurai(gungi.p2Color, 2, 8))
+        gungi.piecesList.append(pieces.Samurai(gungi.p2Color, 3, 8))
+        gungi.piecesList.append(pieces.Captain(gungi.p2Color, 0, 7))
+        gungi.piecesList.append(pieces.Captain(gungi.p2Color, 1, 7))
+        gungi.piecesList.append(pieces.Spear(gungi.p2Color, 2, 7))
+        gungi.piecesList.append(pieces.Spear(gungi.p2Color, 3, 7))
+        gungi.piecesList.append(pieces.Cavalry(gungi.p2Color, 0, 6))
+        gungi.piecesList.append(pieces.Cavalry(gungi.p2Color, 1, 6))
+        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 2, 6))
+        
         #棋盤座標範圍: X:4~12 Y:1~9
         gungi.piecesList.append(pieces.King(gungi.p1Color, 8, 1))
         gungi.piecesList.append(pieces.Prince(gungi.p1Color, 7, 1))
@@ -110,7 +163,7 @@ class gungi():
         gungi.piecesList.append(pieces.Cavalry(gungi.p1Color, 0, 1))
         gungi.piecesList.append(pieces.Cavalry(gungi.p1Color, 1, 1))
         gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 2, 1))
-
+        '''
         gungi.piecesList.append(pieces.King(gungi.p2Color, 8, 9))
         gungi.piecesList.append(pieces.Prince(gungi.p2Color, 7, 9))
         gungi.piecesList.append(pieces.Duke(gungi.p2Color, 9, 9))
@@ -132,7 +185,7 @@ class gungi():
         gungi.piecesList.append(pieces.Cavalry(gungi.p2Color, 13, 9))
         gungi.piecesList.append(pieces.Cavalry(gungi.p2Color, 14, 9))
         gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 15, 9))
-
+        '''
     def pieceDisplay(self):
         for item in gungi.piecesList:
             item.displayPieces(gungi.window)
@@ -199,37 +252,106 @@ class gungi():
             listfi = list(fi)
             if len(listfi) != 0:
                 gungi.piecesSelected = listfi[0]
-
         
-
+    def ready_button(self):
+        button_x = 580
+        button_y = 360
+        button_width = 200
+        button_height = 100
+        #按鈕
+        pygame.draw.rect(self.window, constants.table_color, (button_x,button_y,button_width,button_height))
+        #按鈕文字
+        font = pygame.font.Font(None, 36)
+        text = font.render("Ready", True, constants.line_color)
+        text_rect = text.get_rect(center=(580 + 200 // 2, 360 + 100 // 2))
+        self.window.blit(text, text_rect)        
+        
+        def is_mouse_over_button():
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            return button_x <= mouse_x <= button_x + button_width and button_y <= mouse_y <= button_y + button_height
+        
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if is_mouse_over_button():
+                    print("Button clicked!")
+                    self.piece_prepare = True
 
     def piecesMove(self, pieces, x, y):
-        for item in gungi.piecesList:
-            if pieces.player == gungi.putDownFlag:
-                if item.x == x and item.y == y:
-                    gungi.piecesList.remove(item)
-            else:
-                print("這不是你的棋子")
-                return False
-        
+        if self.piece_prepare == True:
+            for item in gungi.piecesList:
+                if pieces.player == gungi.putDownFlag:
+                    if item.x == x and item.y == y:
+                        gungi.piecesList.remove(item)
+                else:
+                    print("這不是你的棋子")
+                    return False
+        else:
+            for item in gungi.piecesList:
+                    if item.x == x and item.y == y:
+                        gungi.piecesList.remove(item)
         pieces.x = x
         pieces.y = y
 
         print(str(pieces)+"移動到:" +"x="+str(x - 3)  + " y=" + str(y))
         self.piece_moved = True
         #print(str(pieces.player) + str(gungi.putDownFlag))
-        
-        if gungi.putDownFlag == gungi.p1Color:
-            gungi.putDownFlag = gungi.p2Color
-            print("白方的回合")
-           # self.piece_moved = False
-        else:
-            gungi.putDownFlag = gungi.p1Color
-            print("黑方的回合")
-            #self.piece_moved = False
+        if self.piece_prepare == True:
+            if gungi.putDownFlag == gungi.p1Color:
+                gungi.putDownFlag = gungi.p2Color
+                print("白方的回合")
+                # self.piece_moved = False
+            else:
+                gungi.putDownFlag = gungi.p1Color
+                print("黑方的回合")
+                #self.piece_moved = False
             
 
         return True
+
+    def prepare_time(self):
+        
+        #self.window.fill((100,100,100))
+        #self.pieceInit()
+        def Piece_sorting():
+            new_x_W = 13
+            new_y_W = 10
+            new_x_B = 0
+            new_y_B = 0
+            for piece in gungi.piecesList:
+                #白棋
+                if piece.x <= 3 and piece.y >= 6:
+                    piece.x = new_x_W
+                    piece.y = new_y_W
+                    if new_x_W <= 16:
+                        new_x_W +=1
+                    if new_x_W > 16:
+                        new_x_W = 13
+                        new_y_W -=1
+                #黑棋    
+                if piece.x >=13  and piece.y <= 5:
+                    piece.x = new_x_B
+                    piece.y = new_y_B
+                    if new_x_B <= 3:
+                        new_x_B +=1
+                    if new_x_B > 3:
+                        new_x_B = 0
+                        new_y_B +=1
+
+        while self.piece_prepare !=True:
+            
+            self.window.fill((100,100,100))
+            self.drawBoard()
+            self.drawpieceTable()
+            self.pieceDisplay()
+            self.Select_rect()                       
+            self.getEvent()
+            self.ready_button()
+
+            pygame.display.update()
+            pygame.display.flip()
+            
+        Piece_sorting()
+    
 
     def countdown_change(self):
         time_elapsed = pygame.time.get_ticks() - self.start_time

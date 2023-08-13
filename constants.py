@@ -10,6 +10,7 @@ p2Color = 2
 
 board_size = 11
 square_size = 80
+
 board_color = (186, 135, 48)
 table_color = (239,186,97)
 choose_color = (15,242,15)
