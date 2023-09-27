@@ -1,14 +1,13 @@
 import pygame
 
-screen_width = 1440
-screen_height = 880
-start_X = 0
-start_Y = 0
+screen_width = 1200
+screen_height = 720
 
 p1Color = 1
 p2Color = 2
 
-board_size = 11
+row_size = 9
+col_size = 15
 square_size = 80
 
 board_color = (186, 135, 48)
