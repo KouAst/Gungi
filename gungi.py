@@ -15,6 +15,8 @@ class gungi():
     selectedPiece = None
     turnFlag = p2Color
     newpieceFlag = 0
+    chooseFlag = 0
+    piece = None
     z_axis = 0
 
     piecesList = []
@@ -32,6 +34,7 @@ class gungi():
             self.drawBoard()
             self.pieceDisplay()
             self.getEvent()
+            self.rangeDisplay()
             pygame.display.update()
             pygame.display.flip()      
 
@@ -54,55 +57,60 @@ class gungi():
         
     def pieceInit(self):
         #p1
-        gungi.piecesList.append(pieces.King(gungi.p1Color, 7, 0, 1))
-        gungi.piecesList.append(pieces.Prince(gungi.p1Color, 6, 0, 1))
-        gungi.piecesList.append(pieces.Duke(gungi.p1Color, 8, 0, 1))
-        gungi.piecesList.append(pieces.Spear(gungi.p1Color, 7, 1, 1))
-        gungi.piecesList.append(pieces.Shinobi(gungi.p1Color, 4, 1, 1))
-        gungi.piecesList.append(pieces.Shinobi(gungi.p1Color, 10, 1, 1))
-        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 3, 2, 1))
-        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 7, 2, 1))
-        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 11, 2, 1))
-        gungi.piecesList.append(pieces.Fort(gungi.p1Color, 5, 2, 1))
-        gungi.piecesList.append(pieces.Fort(gungi.p1Color, 9, 2, 1))
-        gungi.piecesList.append(pieces.Samurai(gungi.p1Color, 6, 2, 1))
-        gungi.piecesList.append(pieces.Samurai(gungi.p1Color, 8, 2, 1))
+        gungi.piecesList.append(pieces.King(1,gungi.p1Color, 7, 0, 0))
+        gungi.piecesList.append(pieces.Prince(2,gungi.p1Color, 6, 0, 0))
+        gungi.piecesList.append(pieces.Duke(3,gungi.p1Color, 8, 0, 0))
+        gungi.piecesList.append(pieces.Spear(4,gungi.p1Color, 7, 1, 0))
+        gungi.piecesList.append(pieces.Shinobi(5,gungi.p1Color, 4, 1, 0))
+        gungi.piecesList.append(pieces.Shinobi(5,gungi.p1Color, 10, 1, 0))
+        gungi.piecesList.append(pieces.Soldier(6,gungi.p1Color, 3, 2, 0))
+        gungi.piecesList.append(pieces.Soldier(6,gungi.p1Color, 7, 2, 0))
+        gungi.piecesList.append(pieces.Soldier(6,gungi.p1Color, 11, 2, 0))
+        gungi.piecesList.append(pieces.Fort(7,gungi.p1Color, 5, 2, 0))
+        gungi.piecesList.append(pieces.Fort(7,gungi.p1Color, 9, 2, 0))
+        gungi.piecesList.append(pieces.Samurai(8,gungi.p1Color, 6, 2, 0))
+        gungi.piecesList.append(pieces.Samurai(8,gungi.p1Color, 8, 2, 0))
         #p1備戰區
-        gungi.piecesList.append(pieces.Captain(gungi.p1Color, 0, 0, 1))
-        gungi.piecesList.append(pieces.Captain(gungi.p1Color, 0, 1, 1))
-        gungi.piecesList.append(pieces.Spear(gungi.p1Color, 1, 0, 1))
-        gungi.piecesList.append(pieces.Spear(gungi.p1Color, 1, 1, 1))
-        gungi.piecesList.append(pieces.Cavalry(gungi.p1Color, 2, 0, 1))
-        gungi.piecesList.append(pieces.Cavalry(gungi.p1Color, 2, 1, 1))
-        gungi.piecesList.append(pieces.Soldier(gungi.p1Color, 1, 2, 1))
+        gungi.piecesList.append(pieces.Captain(9,gungi.p1Color, 0, 0, 0))
+        gungi.piecesList.append(pieces.Captain(9,gungi.p1Color, 0, 1, 0))
+        gungi.piecesList.append(pieces.Spear(4,gungi.p1Color, 1, 0, 0))
+        gungi.piecesList.append(pieces.Spear(4,gungi.p1Color, 1, 1, 0))
+        gungi.piecesList.append(pieces.Cavalry(10,gungi.p1Color, 2, 0, 0))
+        gungi.piecesList.append(pieces.Cavalry(10,gungi.p1Color, 2, 1, 0))
+        gungi.piecesList.append(pieces.Soldier(6,gungi.p1Color, 1, 2, 0))
         
         #p2
-        gungi.piecesList.append(pieces.King(gungi.p2Color, 7, 8, 1))
-        gungi.piecesList.append(pieces.Prince(gungi.p2Color, 6, 8, 1))
-        gungi.piecesList.append(pieces.Duke(gungi.p2Color, 8, 8, 1))
-        gungi.piecesList.append(pieces.Spear(gungi.p2Color, 7, 7, 1))
-        gungi.piecesList.append(pieces.Shinobi(gungi.p2Color, 4, 7, 1))
-        gungi.piecesList.append(pieces.Shinobi(gungi.p2Color, 10, 7, 1))
-        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 3, 6, 1))
-        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 7, 6, 1))
-        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 11, 6, 1))
-        gungi.piecesList.append(pieces.Fort(gungi.p2Color, 5, 6, 1))
-        gungi.piecesList.append(pieces.Fort(gungi.p2Color, 9, 6, 1))
-        gungi.piecesList.append(pieces.Samurai(gungi.p2Color, 6, 6, 1))
-        gungi.piecesList.append(pieces.Samurai(gungi.p2Color, 8, 6, 1))
+        gungi.piecesList.append(pieces.King(11,gungi.p2Color, 7, 8, 0))
+        gungi.piecesList.append(pieces.Prince(12,gungi.p2Color, 6, 8, 0))
+        gungi.piecesList.append(pieces.Duke(13,gungi.p2Color, 8, 8, 0))
+        gungi.piecesList.append(pieces.Spear(14,gungi.p2Color, 7, 7, 0))
+        gungi.piecesList.append(pieces.Shinobi(15,gungi.p2Color, 4, 7, 0))
+        gungi.piecesList.append(pieces.Shinobi(15,gungi.p2Color, 10, 7, 0))
+        gungi.piecesList.append(pieces.Soldier(16,gungi.p2Color, 3, 6, 0))
+        gungi.piecesList.append(pieces.Soldier(16,gungi.p2Color, 7, 6, 0))
+        gungi.piecesList.append(pieces.Soldier(16,gungi.p2Color, 11, 6, 0))
+        gungi.piecesList.append(pieces.Fort(17,gungi.p2Color, 5, 6, 0))
+        gungi.piecesList.append(pieces.Fort(17,gungi.p2Color, 9, 6, 0))
+        gungi.piecesList.append(pieces.Samurai(18,gungi.p2Color, 6, 6, 0))
+        gungi.piecesList.append(pieces.Samurai(18,gungi.p2Color, 8, 6, 0))
         #p2備戰區
-        gungi.piecesList.append(pieces.Captain(gungi.p2Color, 12, 8, 1))
-        gungi.piecesList.append(pieces.Captain(gungi.p2Color, 12, 7, 1))
-        gungi.piecesList.append(pieces.Spear(gungi.p2Color, 13, 8, 1))
-        gungi.piecesList.append(pieces.Spear(gungi.p2Color, 13, 7, 1))
-        gungi.piecesList.append(pieces.Cavalry(gungi.p2Color, 14, 8, 1))
-        gungi.piecesList.append(pieces.Cavalry(gungi.p2Color, 14, 7, 1))
-        gungi.piecesList.append(pieces.Soldier(gungi.p2Color, 13, 6, 1))
-        
+        gungi.piecesList.append(pieces.Captain(19,gungi.p2Color, 12, 8, 0))
+        gungi.piecesList.append(pieces.Captain(19,gungi.p2Color, 12, 7, 0))
+        gungi.piecesList.append(pieces.Spear(14,gungi.p2Color, 13, 8, 0))
+        gungi.piecesList.append(pieces.Spear(14,gungi.p2Color, 13, 7, 0))
+        gungi.piecesList.append(pieces.Cavalry(20,gungi.p2Color, 14, 8, 0))
+        gungi.piecesList.append(pieces.Cavalry(20,gungi.p2Color, 14, 7, 0))
+        gungi.piecesList.append(pieces.Soldier(16,gungi.p2Color, 13, 6, 0))     
     
     def pieceDisplay(self):
         for item in gungi.piecesList:
             item.displayPieces(gungi.window)
+    
+    def rangeDisplay(self):
+        if gungi.selectedPiece != None:
+            pygame.draw.rect(self.window, constants.choose_color,(gungi.selectedPiece.x*80, gungi.selectedPiece.y*80, constants.square_size, constants.square_size),5)
+            if gungi.newpieceFlag == 0:
+                gungi.selectedPiece.moveRange(self.window)
 
     def getEvent(self):
         eventList = pygame.event.get()
@@ -120,7 +128,8 @@ class gungi():
                 self.select_piece(gungi.turnFlag,x,y)
 
     def exchangeTurn(self,t):
-        gungi.newpieceFlag = 0
+        gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag= 0, 0, 0
+        gungi.selectedPiece = None
 
         if t == 1:
             gungi.turnFlag = 2
@@ -129,47 +138,54 @@ class gungi():
 
     def select_piece(self, turn, x, y):
         selectFilter = list(filter(lambda piece: piece.x == x and piece.y == y and piece.player == turn , gungi.piecesList))
+        arr = pieces.listPiecestoArr(gungi.piecesList)
 
         if len(selectFilter):
             gungi.selectedPiece = selectFilter[0]
 
             selectFilter.sort(key=lambda piece: piece.z, reverse=True)
             gungi.z_axis = selectFilter[0].z
-            if(0 <= selectFilter[0].x < 3 and turn == 1 or 12 <= selectFilter[0].x < 15 and turn == 2):
-                gungi.newpieceFlag = 1
 
             pieceName = gungi.selectedPiece.__class__.__name__
             print("Piece:"+ pieceName,";","z_axis:",gungi.z_axis)
-            print("NewpieceFlag:",gungi.newpieceFlag)
-            return
+            #return
 
         if gungi.selectedPiece:
-            arr = pieces.listPiecestoArr(gungi.piecesList)
-            if gungi.newpieceFlag == 1:
-                gungi.piece = gungi.selectedPiece
-                self.placement_newpiece(turn,x,y,arr)
-            
-            else:
+            if(0 <= gungi.selectedPiece.x < 3 and turn == 1 ) or (12 <= gungi.selectedPiece.x < 15 and turn == 2):
+                if gungi.newpieceFlag == 0:
+                    gungi.newpieceFlag = 1
+                    gungi.piece = gungi.selectedPiece
+
+        if x >= 3 and x <= 11:
+            gungi.chooseFlag = 1
+        
+        if (gungi.newpieceFlag == 1 and gungi.chooseFlag == 1):
+                self.placement_newpiece(gungi.piece,x,y,arr)
+        else:
+            if gungi.selectedPiece and arr[x][y][gungi.z_axis] == 0:
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.z_axis)
                     gungi.selectedPiece = None
                 else:
-                    gungi.selectedPiece = None
+                    gungi.selectedPiece = None              
+        '''
         else:
             fi = filter(lambda p: p.x == x and p.y == y, gungi.piecesList)
             listfi = list(fi)
             if len(listfi) != 0:
-                gungi.selectedPiece = listfi[0]  
+                gungi.selectedPiece = listfi[0]
+        '''
 
-    def placement_newpiece(self,turn,x,y,arr):
+    def placement_newpiece(self, piece, x, y, arr):
         if arr[x][y][0] == 0:
-            gungi.piece.x, gungi.piece.y, gungi.piece.z = x, y, 0
-            self.exchangeTurn(turn)
-        elif arr[x][y][1] == 0:
-            gungi.piece.x, gungi.piece.y, gungi.piece.z = x, y, 1
-            self.exchangeTurn(turn)
+            piece.x, piece.y, piece.z = x, y, 0
+            self.exchangeTurn(gungi.turnFlag)
+        elif arr[x][y][0] == gungi.turnFlag and arr[x][y][1] == 0:
+            piece.x, piece.y, piece.z = x, y, 1
+            self.exchangeTurn(gungi.turnFlag)
 
     def move_piece(self, piece, x, y, z):
+        '''
         for item in gungi.piecesList:
             if piece.player == gungi.turnFlag:
                 if item.x == x and item.y == y:
@@ -177,11 +193,11 @@ class gungi():
             else:
                 print("Not Your Piece")
                 return False
+        '''
         
         piece.x, piece.y, piece.z = x, y, z
 
-        print(str(piece)+" move to " +"x:"+str(x) +" y:"+str(y) +" z:"+str(z))
-        print(str(piece.player) + str(gungi.turnFlag))
+        print(piece.__class__.__name__+" move to " +"x:"+str(x) +" y:"+str(y) +" z:"+str(z))
         self.exchangeTurn(gungi.turnFlag)
         return True
 

@@ -2,12 +2,13 @@ import pygame
 import constants as constants
 
 class Pieces():
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.imageskey = self.getImagekey()
         self.image = constants.pieces_images[self.imageskey]
         self.x = x
         self.y = y
         self.z = z
+        self.piececode = piececode
         self.player = player
         self.rect = self.image.get_rect()
         self.rect.left = x * constants.square_size + 10
@@ -23,11 +24,14 @@ class Pieces():
     
     def canMove(self, arr, movex, movey, movez):
         pass
+
+    def moveRange(self, screen):
+        pass
     
 class King(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
@@ -36,6 +40,7 @@ class King(Pieces):
             return 'w_king'
 
     def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
         if arr[movex][movey][movez] == self.player:
@@ -46,23 +51,72 @@ class King(Pieces):
         elif (x == 1) and (y == -1): return True
         elif (x == -1) and (y == -1): return True
         elif (x == -1) and (y == 1): return True
-        elif (x == 1) and (y == 1): return True
+        elif (x == 1) and (y == 1): return True 
+    
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        if(x+constants.r1 < 12*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+        if(x-constants.r1 > 2*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
         
 class Prince(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
             return 'b_prince'
         else:
             return 'w_prince'
+    
+    def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
+        if self.x == movex and self.y == movey:
+            return False
+        if arr[movex][movey][movez] == self.player:
+            return False
+        x = movex - self.x
+        y = movey - self.y
+        if((abs(x) == 1 and abs(y) == 0) or abs(x) == 0 and abs(y) == 1): return True
+        if (abs(x) == 1 and abs(y) == 1): return True
+        if (self.z == 1):
+            if(abs(x) == 0 and abs(y) == 2): return True
+            if(abs(x) == 2 and abs(y) == 0): return True
+        
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        if(x+constants.r1 < 12*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+        if(x-constants.r1 > 2*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+        if(self.z == 1):
+            if(x+constants.r2 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+            if(x-constants.r2 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
 
 class Duke(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
@@ -70,21 +124,118 @@ class Duke(Pieces):
         else:
             return 'w_duke'
 
+    def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
+        if self.x == movex and self.y == movey:
+            return False
+        if arr[movex][movey][movez] == self.player:
+            return False
+        x = movex - self.x
+        y = movey - self.y
+        if((abs(x) == 1 and abs(y) == 0) or abs(x) == 0 and abs(y) == 1): return True
+        if (abs(x) == 1 and abs(y) == 1): return True
+        if (self.z == 1):
+            if(abs(x) == 2 and abs(y) == 2): return True
+        
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        if(x+constants.r1 < 12*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+        if(x-constants.r1 > 2*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+        if(self.z == 1):
+            if(x+constants.r2 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+            if(x-constants.r2 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+
 class Spear(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
             return 'b_spear'
         else:
-            return 'w_spear'  
+            return 'w_spear'
+
+    def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
+        if self.x == movex and self.y == movey:
+            return False
+        if arr[movex][movey][movez] == self.player:
+            return False
+        x = movex - self.x
+        y = movey - self.y
+        if(self.player == constants.p1Color):
+            if(x == 0) and (abs(y) == 1): return True
+            elif(x == 0) and (y == 2): return True
+            elif(x == 1) and (y == 1): return True
+            elif(x == -1) and (y == 1): return True
+            if(self.z == 1):
+                if(x == 0) and (y == -2): return True
+                elif(x == 0) and (y == 3): return True
+                elif(x == 2) and (y == 2): return True
+                elif(x == -2) and (y == 2): return True
+        if(self.player == constants.p2Color):
+            if(x == 0) and (abs(y) == 1): return True
+            elif(x == 0) and (y == -2): return True
+            elif(x == 1) and (y == -1): return True
+            elif(x == -1) and (y == -1): return True
+            if(self.z == 1):
+                if(x == 0) and (y == 2): return True
+                elif(x == 0) and (y == -3): return True
+                elif(x == 2) and (y == -2): return True
+                elif(x == -2) and (y == -2): return True
+    
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        if(self.player == constants.p1Color):
+            if(x+constants.r1 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            if(x-constants.r1 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(self.z == 1):
+                pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+                if(x+constants.r2 < 12*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+                if(x-constants.r2 > 2*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+        if(self.player == constants.p2Color):
+            if(x+constants.r1 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(x-constants.r1 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+            if(self.z == 1):
+                pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+                if(x+constants.r2 < 12*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+                if(x-constants.r2 > 2*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
 
 class Shinobi(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
@@ -93,20 +244,31 @@ class Shinobi(Pieces):
             return 'w_shinobi'
 
 class Soldier(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
             return 'b_soldier'
         else:
-            return 'w_soldier' 
+            return 'w_soldier'
+        
+    def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
+        if self.x == movex and self.y == movey:
+            return False
+        if arr[movex][movey] == self.player:
+            return False
+        x = movex - self.x
+        y = movey - self.y
+        if (movez == 0) and (x == 0) and (abs(y) == 1): return True
+        if (movez == 1) and (x == 0 or x == 1 or x == -1) and (abs(y) == 1): return True
         
 class Fort(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
@@ -115,9 +277,9 @@ class Fort(Pieces):
             return 'w_fort'
         
 class Samurai(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
@@ -126,9 +288,9 @@ class Samurai(Pieces):
             return 'w_samurai'
 
 class Captain(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
@@ -137,9 +299,9 @@ class Captain(Pieces):
             return 'w_captain' 
 
 class Cavalry(Pieces):
-    def __init__(self, player, x, y, z):
+    def __init__(self, piececode, player, x, y, z):
         self.player = player
-        super().__init__(player, x, y, z)
+        super().__init__(piececode, player, x, y, z)
 
     def getImagekey(self):
         if self.player == constants.p1Color:
@@ -148,10 +310,10 @@ class Cavalry(Pieces):
             return 'w_cavalry'
 
 def listPiecestoArr(piecesList):
-    arr = [[[1 for k in range(3)] for i in range(9)] for j in range(15)]
+    arr = [[[0 for k in range(2)] for i in range(9)] for j in range(15)]
     for i in range(0,15):
         for j in range(0,9):
-            for k in range(1,3):
+            for k in range(0,2):
                 if len(list(filter(lambda piece: piece.x == i and piece.y == j and piece.z == k and piece.player == constants.p1Color, piecesList))):
                     arr[i][j][k] = constants.p1Color
                 elif len(list(filter(lambda piece: piece.x == i and piece.y == j and piece.z == k and piece.player == constants.p2Color, piecesList))):
