@@ -242,6 +242,41 @@ class Shinobi(Pieces):
             return 'b_shinobi'
         else:
             return 'w_shinobi'
+        
+    def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
+        if self.x == movex and self.y == movey:
+            return False
+        if arr[movex][movey][movez] == self.player:
+            return False
+        x = movex - self.x
+        y = movey - self.y
+        if(abs(x)==1 and abs(y)==1): return True
+        if(abs(x)==2 and abs(y)==2): return True
+        if(self.z == 1):
+            if(abs(x)==3 and abs(y)==3): return True
+    
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        if(x+constants.r2 < 12*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+        if(x-constants.r2 > 2*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+        if(self.z == 1):
+            if(x+constants.r3 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r3, y+constants.r3, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r3, y-constants.r3, constants.square_size, constants.square_size),5)
+            if(x-constants.r3 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r3, y+constants.r3, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r3, y-constants.r3, constants.square_size, constants.square_size),5)
+
 
 class Soldier(Pieces):
     def __init__(self, piececode, player, x, y, z):
@@ -262,8 +297,18 @@ class Soldier(Pieces):
             return False
         x = movex - self.x
         y = movey - self.y
-        if (movez == 0) and (x == 0) and (abs(y) == 1): return True
-        if (movez == 1) and (x == 0 or x == 1 or x == -1) and (abs(y) == 1): return True
+        if (abs(x)== 0 and abs(y)==1): return True
+        if (self.z ==1):
+            if(abs(x)== 0 and abs(y)==2): return True
+    
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+        if(self.z== 1):
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
         
 class Fort(Pieces):
     def __init__(self, piececode, player, x, y, z):
@@ -276,6 +321,67 @@ class Fort(Pieces):
         else:
             return 'w_fort'
         
+    def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
+        if self.x == movex and self.y == movey:
+            return False
+        if arr[movex][movey][movez] == self.player:
+            return False
+        x = movex - self.x
+        y = movey - self.y
+        if(self.player == constants.p1Color):
+            if(x == 0 and y == 1): return True
+            if(abs(x) == 1 and y == 0): return True
+            if(abs(x) == 1 and y == -1): return True
+            if(self.z == 1):
+                if(x == 0 and y == 2): return True
+                if(abs(x) == 2 and y == 0): return True
+                if(abs(x) == 2 and y == -2): return True
+        if(self.player == constants.p2Color):
+            if(x == 0 and y == -1): return True
+            if(abs(x) == 1 and y == 0): return True
+            if(abs(x) == 1 and y == 1): return True
+            if(self.z == 1):
+                if(x == 0 and y == -2): return True
+                if(abs(x) == 2 and y == 0): return True
+                if(abs(x) == 2 and y == 2): return True  
+
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        if(self.player == constants.p1Color):
+            if(x+constants.r1 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(x-constants.r1 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(self.z == 1):
+                if(x+constants.r2 < 12*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+                if(x-constants.r2 > 2*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+        if(self.player == constants.p2Color):
+            if(x+constants.r1 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            if(x-constants.r1 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            if(self.z == 1):
+                if(x+constants.r2 < 12*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+                if(x-constants.r2 > 2*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+
 class Samurai(Pieces):
     def __init__(self, piececode, player, x, y, z):
         self.player = player
@@ -286,6 +392,59 @@ class Samurai(Pieces):
             return 'b_samurai'
         else:
             return 'w_samurai'
+
+    def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
+        if self.x == movex and self.y == movey:
+            return False
+        if arr[movex][movey][movez] == self.player:
+            return False
+        x = movex - self.x
+        y = movey - self.y
+        if(self.player == constants.p1Color):
+            if(x == 0 and abs(y) == 1): return True
+            if(abs(x) == 1 and y == 1): return True
+            if(self.z == 1):
+                if(x == 0 and abs(y) == 2): return True
+                if(abs(x) == 2 and y == 2): return True
+        if(self.player == constants.p2Color):
+            if(x == 0 and abs(y) == 1): return True
+            if(abs(x) == 1 and y == -1): return True
+            if(self.z == 1):
+                if(x == 0 and abs(y) == 2): return True
+                if(abs(x) == 2 and y == -2): return True        
+
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        if(self.player == constants.p1Color):
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(x+constants.r1 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            if(x-constants.r1 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+            if(self.z == 1):
+                pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+                if(x+constants.r2 < 12*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+                if(x-constants.r2 > 2*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+        if(self.player == constants.p2Color):
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(x+constants.r1 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(x-constants.r1 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(self.z == 1):
+                pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+                if(x+constants.r2 < 12*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+                if(x-constants.r2 > 2*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
 
 class Captain(Pieces):
     def __init__(self, piececode, player, x, y, z):
@@ -298,6 +457,71 @@ class Captain(Pieces):
         else:
             return 'w_captain' 
 
+    def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
+        if self.x == movex and self.y == movey:
+            return False
+        if arr[movex][movey][movez] == self.player:
+            return False
+        x = movex - self.x
+        y = movey - self.y
+        if(self.player == constants.p1Color):
+            if(x == 0 and abs(y) == 1): return True
+            if(abs(x) == 1 and y == 1): return True
+            if(abs(x) == 1 and y == 0): return True
+            if(self.z == 1):
+                if(x == 0 and abs(y) == 2): return True
+                if(abs(x) == 2 and y == 2): return True
+                if(abs(x) == 2 and y == 0): return True
+        if(self.player == constants.p2Color):
+            if(x == 0 and abs(y) == 1): return True
+            if(abs(x) == 1 and y == -1): return True
+            if(abs(x) == 1 and y == 0): return True
+            if(self.z == 1):
+                if(x == 0 and abs(y) == 2): return True
+                if(abs(x) == 2 and y == -2): return True
+                if(abs(x) == 2 and y == 0): return True
+
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        if(self.player == constants.p1Color):
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(x+constants.r1 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y, constants.square_size, constants.square_size),5)
+            if(x-constants.r1 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
+            if(self.z == 1):
+                pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+                if(x+constants.r2 < 12*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y, constants.square_size, constants.square_size),5)
+                if(x-constants.r2 > 2*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
+        if(self.player == constants.p2Color):
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+            if(x+constants.r1 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y, constants.square_size, constants.square_size),5)
+            if(x-constants.r1 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
+            if(self.z == 1):
+                pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+                if(x+constants.r2 < 12*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y, constants.square_size, constants.square_size),5)
+                if(x-constants.r2 > 2*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
+
 class Cavalry(Pieces):
     def __init__(self, piececode, player, x, y, z):
         self.player = player
@@ -308,6 +532,40 @@ class Cavalry(Pieces):
             return 'b_cavalry'
         else:
             return 'w_cavalry'
+
+    def canMove(self, arr, movex, movey, movez):
+        if movex < 3 or movex > 12: return False
+        if self.x == movex and self.y == movey:
+            return False
+        if arr[movex][movey][movez] == self.player:
+            return False
+        x = movex - self.x
+        y = movey - self.y
+        if(x == 0 and abs(y) == 1): return True
+        if(x == 0 and abs(y) == 2): return True
+        if(abs(x) == 1 and y == 0): return True
+        if(self.z == 1):
+            if(x == 0 and abs(y) == 3): return True
+            if(abs(x) == 2 and y == 0): return True
+
+    def moveRange(self, screen):
+        x = self.x * constants.square_size
+        y = self.y * constants.square_size
+        pygame.draw.rect(screen, constants.range_color, (x, y+constants.r1, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y-constants.r1, constants.square_size, constants.square_size),5)
+        pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+        if(x+constants.r1 < 12*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y, constants.square_size, constants.square_size),5)
+        if(x-constants.r1 > 2*constants.square_size):
+            pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
+        if(self.z == 1):
+            pygame.draw.rect(screen, constants.range_color, (x, y+constants.r3, constants.square_size, constants.square_size),5)
+            pygame.draw.rect(screen, constants.range_color, (x, y-constants.r3, constants.square_size, constants.square_size),5)
+            if(x+constants.r2 < 12*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y, constants.square_size, constants.square_size),5)
+            if(x-constants.r2 > 2*constants.square_size):
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
 
 def listPiecestoArr(piecesList):
     arr = [[[0 for k in range(2)] for i in range(9)] for j in range(15)]

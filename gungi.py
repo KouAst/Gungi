@@ -100,7 +100,7 @@ class gungi():
         gungi.piecesList.append(pieces.Spear(14,gungi.p2Color, 13, 7, 0))
         gungi.piecesList.append(pieces.Cavalry(20,gungi.p2Color, 14, 8, 0))
         gungi.piecesList.append(pieces.Cavalry(20,gungi.p2Color, 14, 7, 0))
-        gungi.piecesList.append(pieces.Soldier(16,gungi.p2Color, 13, 6, 0))     
+        gungi.piecesList.append(pieces.Soldier(16,gungi.p2Color, 13, 6, 0))    
     
     def pieceDisplay(self):
         for item in gungi.piecesList:
