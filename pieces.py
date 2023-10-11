@@ -43,8 +43,8 @@ class King(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey][movez] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if abs(x) + abs(y) == 1: return True
@@ -82,8 +82,8 @@ class Prince(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey][movez] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if((abs(x) == 1 and abs(y) == 0) or abs(x) == 0 and abs(y) == 1): return True
@@ -128,8 +128,8 @@ class Duke(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey][movez] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if((abs(x) == 1 and abs(y) == 0) or abs(x) == 0 and abs(y) == 1): return True
@@ -173,8 +173,8 @@ class Spear(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey][movez] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if(self.player == constants.p1Color):
@@ -247,8 +247,8 @@ class Shinobi(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey][movez] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if(abs(x)==1 and abs(y)==1): return True
@@ -259,14 +259,16 @@ class Shinobi(Pieces):
     def moveRange(self, screen):
         x = self.x * constants.square_size
         y = self.y * constants.square_size
-        if(x+constants.r2 < 12*constants.square_size):
+        if(x+constants.r1 < 12*constants.square_size):
             pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
             pygame.draw.rect(screen, constants.range_color, (x+constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+        if(x+constants.r2 < 12*constants.square_size):
             pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
             pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
-        if(x-constants.r2 > 2*constants.square_size):
+        if(x-constants.r1 > 2*constants.square_size):
             pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
             pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
+        if(x-constants.r2 > 2*constants.square_size):
             pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
             pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
         if(self.z == 1):
@@ -293,8 +295,8 @@ class Soldier(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if (abs(x)== 0 and abs(y)==1): return True
@@ -325,8 +327,8 @@ class Fort(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey][movez] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if(self.player == constants.p1Color):
@@ -397,8 +399,8 @@ class Samurai(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey][movez] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if(self.player == constants.p1Color):
@@ -461,8 +463,8 @@ class Captain(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey][movez] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if(self.player == constants.p1Color):
@@ -537,8 +539,8 @@ class Cavalry(Pieces):
         if movex < 3 or movex > 12: return False
         if self.x == movex and self.y == movey:
             return False
-        if arr[movex][movey][movez] == self.player:
-            return False
+        #if arr[movex][movey][movez] == self.player:
+            #return True
         x = movex - self.x
         y = movey - self.y
         if(x == 0 and abs(y) == 1): return True

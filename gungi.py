@@ -16,6 +16,8 @@ class gungi():
     turnFlag = p2Color
     newpieceFlag = 0
     chooseFlag = 0
+    tempZFlag = 0
+    moveFlag = 0
     piece = None
     z_axis = 0
 
@@ -128,7 +130,7 @@ class gungi():
                 self.select_piece(gungi.turnFlag,x,y)
 
     def exchangeTurn(self,t):
-        gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag= 0, 0, 0
+        gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag, gungi.tempZFlag, gungi.moveFlag= 0, 0, 0, 0, 0
         gungi.selectedPiece = None
 
         if t == 1:
@@ -140,34 +142,29 @@ class gungi():
         selectFilter = list(filter(lambda piece: piece.x == x and piece.y == y and piece.player == turn , gungi.piecesList))
         arr = pieces.listPiecestoArr(gungi.piecesList)
 
-        if len(selectFilter):
-            gungi.selectedPiece = selectFilter[0]
+        if gungi.moveFlag == 0:
+            if len(selectFilter) == 1:
+                gungi.selectedPiece = selectFilter[0]
+                selectFilter.sort(key=lambda piece: piece.z)
+                gungi.z_axis = selectFilter[0].z
 
-            selectFilter.sort(key=lambda piece: piece.z, reverse=True)
-            gungi.z_axis = selectFilter[0].z
+                pieceName = gungi.selectedPiece.__class__.__name__
+                print("Piece:"+ pieceName,";","z_axis:",gungi.z_axis)
+                #return
+            elif len(selectFilter) == 2:
+                gungi.selectedPiece = selectFilter[1]
+                selectFilter.sort(key=lambda piece: piece.z)
+                gungi.z_axis = selectFilter[1].z
 
-            pieceName = gungi.selectedPiece.__class__.__name__
-            print("Piece:"+ pieceName,";","z_axis:",gungi.z_axis)
-            #return
+                pieceName = gungi.selectedPiece.__class__.__name__
+                print("Piece:"+ pieceName,";","z_axis:",gungi.z_axis)
+                #return
 
         if gungi.selectedPiece:
             if(0 <= gungi.selectedPiece.x < 3 and turn == 1 ) or (12 <= gungi.selectedPiece.x < 15 and turn == 2):
                 if gungi.newpieceFlag == 0:
                     gungi.newpieceFlag = 1
                     gungi.piece = gungi.selectedPiece
-
-        if x >= 3 and x <= 11:
-            gungi.chooseFlag = 1
-        
-        if (gungi.newpieceFlag == 1 and gungi.chooseFlag == 1):
-                self.placement_newpiece(gungi.piece,x,y,arr)
-        else:
-            if gungi.selectedPiece and arr[x][y][gungi.z_axis] == 0:
-                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
-                    self.move_piece(gungi.selectedPiece, x, y, gungi.z_axis)
-                    gungi.selectedPiece = None
-                else:
-                    gungi.selectedPiece = None              
         '''
         else:
             fi = filter(lambda p: p.x == x and p.y == y, gungi.piecesList)
@@ -175,6 +172,49 @@ class gungi():
             if len(listfi) != 0:
                 gungi.selectedPiece = listfi[0]
         '''
+
+        if x >= 3 and x <= 11:
+            if gungi.newpieceFlag == 1:
+                gungi.chooseFlag = 1
+            elif gungi.moveFlag < 2: 
+                gungi.moveFlag += 1
+        
+        if (gungi.newpieceFlag == 1 and gungi.chooseFlag == 1):
+                self.placement_newpiece(gungi.piece,x,y,arr)
+        elif gungi.newpieceFlag == 0 and gungi.moveFlag == 2:
+            if gungi.z_axis == 0 and arr[x][y][gungi.z_axis] == 0:
+                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                    self.move_piece(gungi.selectedPiece, x, y, gungi.z_axis)
+                    #gungi.selectedPiece = None
+                else:
+                    gungi.selectedPiece = None
+                    gungi.moveFlag = 0
+            elif gungi.z_axis == 1 and arr[x][y][0] == 0:
+                gungi.tempZFlag = 0
+                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                    self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
+                    #gungi.selectedPiece = None
+                else:
+                    gungi.selectedPiece = None
+                    gungi.moveFlag = 0
+            elif gungi.z_axis == 0 and arr[x][y][0] == gungi.turnFlag:
+                gungi.tempZFlag = 1
+                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                    self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
+                    #gungi.selectedPiece = None
+                else:
+                    gungi.selectedPiece = None
+                    gungi.moveFlag = 0
+            '''
+            elif gungi.z_axis == 0 and arr[x][y][0] != gungi.turnFlag:
+                gungi.tempZFlag = 0
+                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                    self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
+                    #gungi.selectedPiece = None
+                else:
+                    gungi.selectedPiece = None
+                    gungi.moveFlag = 0
+            '''
 
     def placement_newpiece(self, piece, x, y, arr):
         if arr[x][y][0] == 0:
