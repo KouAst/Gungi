@@ -16,7 +16,10 @@ class Pieces():
 
     def displayPieces(self, screen):
         self.rect.left = self.x * constants.square_size + 10
-        self.rect.top = self.y * constants.square_size + 10 - (self.z-1)*5
+        if self.z == 0:
+            self.rect.top = self.y * constants.square_size + 10
+        else:
+            self.rect.top = self.y * constants.square_size + 5
         screen.blit(self.image, self.rect)
 
     def getImagekey(self):

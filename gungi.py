@@ -105,6 +105,7 @@ class gungi():
         gungi.piecesList.append(pieces.Soldier(16,gungi.p2Color, 13, 6, 0))    
     
     def pieceDisplay(self):
+        gungi.piecesList.sort(key=lambda item: item.z)
         for item in gungi.piecesList:
             item.displayPieces(gungi.window)
     
@@ -159,6 +160,7 @@ class gungi():
                 pieceName = gungi.selectedPiece.__class__.__name__
                 print("Piece:"+ pieceName,";","z_axis:",gungi.z_axis)
                 #return
+            else: return
 
         if gungi.selectedPiece:
             if(0 <= gungi.selectedPiece.x < 3 and turn == 1 ) or (12 <= gungi.selectedPiece.x < 15 and turn == 2):
@@ -183,6 +185,7 @@ class gungi():
                 self.placement_newpiece(gungi.piece,x,y,arr)
         elif gungi.newpieceFlag == 0 and gungi.moveFlag == 2:
             if gungi.z_axis == 0 and arr[x][y][gungi.z_axis] == 0:
+                print("move action=0")
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.z_axis)
                     #gungi.selectedPiece = None
@@ -190,6 +193,7 @@ class gungi():
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
             elif gungi.z_axis == 1 and arr[x][y][0] == 0:
+                print("move action=1")
                 gungi.tempZFlag = 0
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
@@ -197,7 +201,8 @@ class gungi():
                 else:
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
-            elif gungi.z_axis == 0 and arr[x][y][0] == gungi.turnFlag:
+            elif gungi.z_axis == 1 and arr[x][y][0] == gungi.turnFlag:
+                print("move action=2")
                 gungi.tempZFlag = 1
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
@@ -205,9 +210,28 @@ class gungi():
                 else:
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
-            '''
-            elif gungi.z_axis == 0 and arr[x][y][0] != gungi.turnFlag:
+            elif gungi.z_axis == 0 and arr[x][y][0] == gungi.turnFlag:
+                print("move action=3")
+                gungi.tempZFlag = 1
+                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                    self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
+                    #gungi.selectedPiece = None
+                else:
+                    gungi.selectedPiece = None
+                    gungi.moveFlag = 0
+            elif gungi.z_axis == 0 and arr[x][y][0] != gungi.turnFlag and arr[x][y][1] == 0:
+                print("move action=4")
                 gungi.tempZFlag = 0
+                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                    self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
+                    #gungi.selectedPiece = None
+                else:
+                    gungi.selectedPiece = None
+                    gungi.moveFlag = 0
+            '''
+            elif gungi.z_axis == 1 and arr[x][y][0] != gungi.turnFlag:
+                print("move action=5")
+                gungi.tempZFlag = 1
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
                     #gungi.selectedPiece = None
@@ -225,15 +249,13 @@ class gungi():
             self.exchangeTurn(gungi.turnFlag)
 
     def move_piece(self, piece, x, y, z):
-        '''
         for item in gungi.piecesList:
             if piece.player == gungi.turnFlag:
-                if item.x == x and item.y == y:
+                if item.x == x and item.y == y and item.z == z:
                     gungi.piecesList.remove(item)
             else:
                 print("Not Your Piece")
                 return False
-        '''
         
         piece.x, piece.y, piece.z = x, y, z
 
