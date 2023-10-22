@@ -9,6 +9,7 @@ import pieces as pieces
 class gungi():
     window = None
 
+    
     p1Color = constants.p1Color #Black
     p2Color = constants.p2Color #White
 
@@ -37,6 +38,7 @@ class gungi():
             self.pieceDisplay()
             self.getEvent()
             self.rangeDisplay()
+            self.wingame()
             pygame.display.update()
             pygame.display.flip()      
 
@@ -262,6 +264,35 @@ class gungi():
         print(piece.__class__.__name__+" move to " +"x:"+str(x) +" y:"+str(y) +" z:"+str(z))
         self.exchangeTurn(gungi.turnFlag)
         return True
+
+    def wingame(self):
+        p1_King = False
+        p2_King = False
+        
+
+        
+
+        for piece in self.piecesList:
+            if isinstance(piece, pieces.King):
+                if piece.player == constants.p1Color:
+                    p1_King = True
+                elif piece.player == constants.p2Color:
+                    p2_King = True
+        
+
+        if p1_King == p2_King:
+            return 
+        elif (p1_King == True) and (p2_King == False):                      
+            print("黑方勝利")
+            return self.endGame()
+            #return self.endGame()
+        else:
+            print("白方勝利")
+            return self.endGame()
+                    
+            #return self.endGame()
+        
+        
 
     def endGame(self):
         print("關閉")
