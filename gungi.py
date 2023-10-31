@@ -2,16 +2,18 @@ import sys
 import pygame
 import time
 import math
+import random
 import threading
 import constants as constants
 import pieces as pieces
+#import computer as computer
 
 class gungi():
     window = None
 
     
-    p1Color = constants.p1Color #Black
-    p2Color = constants.p2Color #White
+    p1Color = constants.p1Color #Black 預設電腦
+    p2Color = constants.p2Color #White 預設玩家
 
     selectedPiece = None
     turnFlag = p2Color
@@ -21,7 +23,6 @@ class gungi():
     moveFlag = 0
     piece = None
     z_axis = 0
-
     piecesList = []
 
     
@@ -36,6 +37,7 @@ class gungi():
             time.sleep(0.1)
             self.drawBoard()
             self.pieceDisplay()
+            self.AI_move()
             self.getEvent()
             self.rangeDisplay()
             self.wingame()
@@ -123,14 +125,15 @@ class gungi():
             if event.type == pygame.QUIT:
                 self.endGame()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                posx = pos[0]
-                posy = pos[1]
-                #print("posx:",posx,";","posy:",posy)
-                x = math.floor(posx / 80)
-                y = math.floor(posy / 80)
-                print("x:",x,";","y:",y)
-                self.select_piece(gungi.turnFlag,x,y)
+                #if not self.wingame() and self.turnFlag==constants.p2Color:
+                    pos = pygame.mouse.get_pos()
+                    posx = pos[0]
+                    posy = pos[1]
+                    #print("posx:",posx,";","posy:",posy)
+                    x = math.floor(posx / 80)
+                    y = math.floor(posy / 80)
+                    print("x:",x,";","y:",y)
+                    self.select_piece(gungi.turnFlag,x,y)
 
     def exchangeTurn(self,t):
         gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag, gungi.tempZFlag, gungi.moveFlag= 0, 0, 0, 0, 0
@@ -140,6 +143,7 @@ class gungi():
             gungi.turnFlag = 2
         elif t == 2:
             gungi.turnFlag = 1       
+
 
     def select_piece(self, turn, x, y):
         selectFilter = list(filter(lambda piece: piece.x == x and piece.y == y and piece.player == turn , gungi.piecesList))
@@ -264,6 +268,21 @@ class gungi():
         print(piece.__class__.__name__+" move to " +"x:"+str(x) +" y:"+str(y) +" z:"+str(z))
         self.exchangeTurn(gungi.turnFlag)
         return True
+
+    def AI_move(self):
+        availd_piece=[]
+        if self.turnFlag == self.p1Color:
+            for self.piece in self.piecesList:
+                if self.piece.player == self.p1Color:
+                    availd_piece.append(self.piece)
+            if len(availd_piece)>0:
+                move_piece = availd_piece[random.randint(0,len(availd_piece)-1)]
+                self.select_piece(self.turnFlag,move_piece.x,move_piece.y)
+                pygame.time.wait(100)
+                self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
+        else:
+            return
+        
 
     def wingame(self):
         p1_King = False
