@@ -29,7 +29,7 @@ class gungi():
 
     def startGame(self):
         pygame.init()
-        gungi.window = pygame.display.set_mode((constants.screen_width,constants.screen_height))#,pygame.FULLSCREEN)
+        gungi.window = pygame.display.set_mode((constants.screen_width,constants.screen_height))#,pygame.RESIZABLE)
         pygame.display.set_caption('Gungi')        
         self.pieceInit()
         
@@ -37,6 +37,7 @@ class gungi():
             time.sleep(0.1)
             self.drawBoard()
             self.pieceDisplay()
+            #self.Instructions()
             self.AI_move()
             self.getEvent()
             self.rangeDisplay()
@@ -115,10 +116,18 @@ class gungi():
     
     def rangeDisplay(self):
         if gungi.selectedPiece != None:
-            pygame.draw.rect(self.window, constants.choose_color,(gungi.selectedPiece.x*80, gungi.selectedPiece.y*80, constants.square_size, constants.square_size),5)
             if gungi.newpieceFlag == 0:
                 gungi.selectedPiece.moveRange(self.window)
-
+            pygame.draw.rect(self.window, constants.choose_color,(gungi.selectedPiece.x*80, gungi.selectedPiece.y*80, constants.square_size, constants.square_size),5)
+            
+    '''
+    def Instructions(self):
+        
+        font = pygame.font.Font(None, 60)
+        text = font.render("?", True, (0, 0, 0))
+        pygame.draw.circle(self.window,(255,255,255), (1160,40), 30)
+        self.window.blit(text, (1148, 22))
+    '''        
     def getEvent(self):
         eventList = pygame.event.get()
         for event in eventList:
@@ -134,6 +143,8 @@ class gungi():
                     y = math.floor(posy / 80)
                     print("x:",x,";","y:",y)
                     self.select_piece(gungi.turnFlag,x,y)
+            
+                
 
     def exchangeTurn(self,t):
         gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag, gungi.tempZFlag, gungi.moveFlag= 0, 0, 0, 0, 0
@@ -181,7 +192,7 @@ class gungi():
                 gungi.selectedPiece = listfi[0]
         '''
 
-        if x >= 3 and x <= 11:
+        if x >= 3 and x <= 11 and y>=0:
             if gungi.newpieceFlag == 1:
                 gungi.chooseFlag = 1
             elif gungi.moveFlag < 2: 
@@ -279,7 +290,10 @@ class gungi():
                 move_piece = availd_piece[random.randint(0,len(availd_piece)-1)]
                 self.select_piece(self.turnFlag,move_piece.x,move_piece.y)
                 pygame.time.wait(100)
-                self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
+                if move_piece.z==0:
+                    self.select_piece(self.turnFlag,random.randint(move_piece.x-1,move_piece.x+1),random.randint(move_piece.y-1,move_piece.y+1))
+                if move_piece.z==1:
+                    self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
         else:
             return
         
@@ -293,9 +307,9 @@ class gungi():
 
         for piece in self.piecesList:
             if isinstance(piece, pieces.King):
-                if piece.player == constants.p1Color:
+                if piece.player == self.p1Color:
                     p1_King = True
-                elif piece.player == constants.p2Color:
+                elif piece.player == self.p2Color:
                     p2_King = True
         
 
