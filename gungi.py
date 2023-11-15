@@ -21,6 +21,7 @@ class gungi():
     chooseFlag = 0
     tempZFlag = 0
     moveFlag = 0
+    attackFlag = 0
     piece = None
     z_axis = 0
     piecesList = []
@@ -147,7 +148,7 @@ class gungi():
                 
 
     def exchangeTurn(self,t):
-        gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag, gungi.tempZFlag, gungi.moveFlag= 0, 0, 0, 0, 0
+        gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag, gungi.tempZFlag, gungi.moveFlag, gungi.attackFlag= 0, 0, 0, 0, 0, 0
         gungi.selectedPiece = None
 
         if t == 1:
@@ -202,7 +203,7 @@ class gungi():
                 self.placement_newpiece(gungi.piece,x,y,arr)
         elif gungi.newpieceFlag == 0 and gungi.moveFlag == 2:
             if gungi.z_axis == 0 and arr[x][y][gungi.z_axis] == 0:
-                print("move action=0")
+                print("action:moving")
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.z_axis)
                     #gungi.selectedPiece = None
@@ -210,7 +211,7 @@ class gungi():
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
             elif gungi.z_axis == 1 and arr[x][y][0] == 0:
-                print("move action=1")
+                print("action:unstack moving(lower)")
                 gungi.tempZFlag = 0
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
@@ -219,7 +220,7 @@ class gungi():
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
             elif gungi.z_axis == 1 and arr[x][y][0] == gungi.turnFlag:
-                print("move action=2")
+                print("action:stack moving")
                 gungi.tempZFlag = 1
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
@@ -228,7 +229,7 @@ class gungi():
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
             elif gungi.z_axis == 0 and arr[x][y][0] == gungi.turnFlag:
-                print("move action=3")
+                print("action:stack moving(upper)")
                 gungi.tempZFlag = 1
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
@@ -237,7 +238,8 @@ class gungi():
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
             elif gungi.z_axis == 0 and arr[x][y][0] != gungi.turnFlag and arr[x][y][1] == 0:
-                print("move action=4")
+                print("action:attack(0>0)")
+                gungi.attackFlag = 1
                 gungi.tempZFlag = 0
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
@@ -245,9 +247,19 @@ class gungi():
                 else:
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
-            '''
-            elif gungi.z_axis == 1 and arr[x][y][0] != gungi.turnFlag:
-                print("move action=5")
+            elif gungi.z_axis == 1 and arr[x][y][0] != gungi.turnFlag and arr[x][y][1] == 0:
+                print("action:attack(1>0)")
+                gungi.attackFlag = 1
+                gungi.tempZFlag = 0
+                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                    self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
+                    #gungi.selectedPiece = None
+                else:
+                    gungi.selectedPiece = None
+                    gungi.moveFlag = 0
+            elif gungi.z_axis == 0 and arr[x][y][0] != 0 and arr[x][y][1] != gungi.turnFlag:
+                print("action:attack(0>1)")
+                gungi.attackFlag = 1
                 gungi.tempZFlag = 1
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
                     self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
@@ -255,7 +267,16 @@ class gungi():
                 else:
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
-            '''
+            elif gungi.z_axis == 1 and arr[x][y][0] != 0 and arr[x][y][1] != gungi.turnFlag:
+                print("action:attack(1>1)")
+                gungi.attackFlag = 1
+                gungi.tempZFlag = 1
+                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                    self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
+                    #gungi.selectedPiece = None
+                else:
+                    gungi.selectedPiece = None
+                    gungi.moveFlag = 0
 
     def placement_newpiece(self, piece, x, y, arr):
         if arr[x][y][0] == 0:
@@ -268,7 +289,7 @@ class gungi():
     def move_piece(self, piece, x, y, z):
         for item in gungi.piecesList:
             if piece.player == gungi.turnFlag:
-                if item.x == x and item.y == y and item.z == z:
+                if item.x == x and item.y == y and item.z == z and gungi.attackFlag == 1:
                     gungi.piecesList.remove(item)
             else:
                 print("Not Your Piece")
@@ -322,7 +343,6 @@ class gungi():
         else:
             print("白方勝利")
             return self.endGame()
-                    
             #return self.endGame()
         
         
