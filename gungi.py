@@ -1,5 +1,6 @@
 import sys
 import pygame
+from tkinter import messagebox
 import time
 import math
 import random
@@ -24,28 +25,35 @@ class gungi():
     attackFlag = 0
     piece = None
     z_axis = 0
+    sound = []
     piecesList = []
+    
 
     
 
     def startGame(self):
         pygame.init()
+        pygame.mixer.init()
         gungi.window = pygame.display.set_mode((constants.screen_width,constants.screen_height))#,pygame.RESIZABLE)
         pygame.display.set_caption('Gungi')        
         self.pieceInit()
+        self.soundInit()
         
         while True:
-            time.sleep(0.1)
+            time.sleep(0.2)
             self.drawBoard()
             self.pieceDisplay()
+            self.wingame() 
             #self.Instructions()
             self.AI_move()
             self.getEvent()
             self.rangeDisplay()
-            self.wingame()
             pygame.display.update()
-            pygame.display.flip()      
-
+            pygame.display.flip()
+                 
+            
+    
+    
     def drawBoard(self):
         for row in range(constants.row_size):
             for col in range(constants.col_size):
@@ -128,7 +136,13 @@ class gungi():
         text = font.render("?", True, (0, 0, 0))
         pygame.draw.circle(self.window,(255,255,255), (1160,40), 30)
         self.window.blit(text, (1148, 22))
-    '''        
+    ''' 
+
+    def soundInit(self):
+        for i in range(0,6):
+            self.sound.append(pygame.mixer.Sound("sound/"+str(i+1)+".wav"))
+        print("以載入"+str(len(self.sound))+"種音效")
+
     def getEvent(self):
         eventList = pygame.event.get()
         for event in eventList:
@@ -257,6 +271,7 @@ class gungi():
                 else:
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
+                '''        
             elif gungi.z_axis == 0 and arr[x][y][0] != 0 and arr[x][y][1] != gungi.turnFlag:
                 print("action:attack(0>1)")
                 gungi.attackFlag = 1
@@ -267,6 +282,7 @@ class gungi():
                 else:
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
+                '''        
             elif gungi.z_axis == 1 and arr[x][y][0] != 0 and arr[x][y][1] != gungi.turnFlag:
                 print("action:attack(1>1)")
                 gungi.attackFlag = 1
@@ -281,9 +297,15 @@ class gungi():
     def placement_newpiece(self, piece, x, y, arr):
         if arr[x][y][0] == 0:
             piece.x, piece.y, piece.z = x, y, 0
+            self.sound[random.randint(0,5)].play()
+            print(str(x)+"-"+str(y)+"-"+str(piece.z)+" "+ str(piece.__class__.__name__)+" new")
+            
             self.exchangeTurn(gungi.turnFlag)
         elif arr[x][y][0] == gungi.turnFlag and arr[x][y][1] == 0:
             piece.x, piece.y, piece.z = x, y, 1
+            self.sound[random.randint(0,5)].play()
+            print(str(x)+"-"+str(y)+"-"+str(piece.z)+" "+ str(piece.__class__.__name__)+" new")
+            
             self.exchangeTurn(gungi.turnFlag)
 
     def move_piece(self, piece, x, y, z):
@@ -291,13 +313,16 @@ class gungi():
             if piece.player == gungi.turnFlag:
                 if item.x == x and item.y == y and item.z == z and gungi.attackFlag == 1:
                     gungi.piecesList.remove(item)
+                    
             else:
                 print("Not Your Piece")
                 return False
         
         piece.x, piece.y, piece.z = x, y, z
 
-        print(piece.__class__.__name__+" move to " +"x:"+str(x) +" y:"+str(y) +" z:"+str(z))
+        self.sound[random.randint(0,5)].play()
+        print(str(x)+"-"+str(y)+"-"+str(z)+" "+ piece.__class__.__name__)
+        
         self.exchangeTurn(gungi.turnFlag)
         return True
 
@@ -310,14 +335,43 @@ class gungi():
             if len(availd_piece)>0:
                 move_piece = availd_piece[random.randint(0,len(availd_piece)-1)]
                 self.select_piece(self.turnFlag,move_piece.x,move_piece.y)
-                pygame.time.wait(100)
+                
                 if move_piece.z==0:
-                    self.select_piece(self.turnFlag,random.randint(move_piece.x-1,move_piece.x+1),random.randint(move_piece.y-1,move_piece.y+1))
+                    if move_piece.__class__.__name__ == "Shinobi":
+                        self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
+                    elif move_piece.__class__.__name__ == "Spear":
+                        self.select_piece(self.turnFlag,random.randint(move_piece.x-1,move_piece.x+1),random.randint(move_piece.y-1,move_piece.y+2))
+                    elif move_piece.__class__.__name__ == ("Prince" or "Duke"):
+                        self.select_piece(self.turnFlag,random.randint(3,11),random.randint(0,8))
+                    else:
+                        self.select_piece(self.turnFlag,random.randint(move_piece.x-1,move_piece.x+1),random.randint(move_piece.y-1,move_piece.y+1))
                 if move_piece.z==1:
-                    self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
+                    if move_piece.__class__.__name__ == "Shinobi":
+                        self.select_piece(self.turnFlag,random.randint(move_piece.x-3,move_piece.x+3),random.randint(move_piece.y-3,move_piece.y+3))
+                    elif move_piece.__class__.__name__ == "Spear":
+                        self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+3))
+                    elif move_piece.__class__.__name__ == ("Prince" or "Duke"):
+                        self.select_piece(self.turnFlag,random.randint(3,11),random.randint(0,8))
+                    else:
+                        self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
         else:
             return
+
+    def resetGame(self):
+
+        self.selectedPiece = None
+        self.turnFlag = self.p2Color
+        self.newpieceFlag = 0
+        self.chooseFlag = 0
+        self.tempZFlag = 0
+        self.moveFlag = 0
+        self.attackFlag = 0
+        self.piece = None
+        self.z_axis = 0
+        self.sound.clear()
         
+        self.piecesList.clear()
+          
 
     def wingame(self):
         p1_King = False
@@ -337,14 +391,32 @@ class gungi():
         if p1_King == p2_King:
             return 
         elif (p1_King == True) and (p2_King == False):                      
-            print("黑方勝利")
-            return self.endGame()
-            #return self.endGame()
+            print("電腦勝利")
+            messagebox.showinfo("Game Over", "黑方勝利")
+            result = messagebox.askquestion("Restart", "是否要重新開始遊戲？")
+            if result == 'yes':
+                # 在这里添加重新开始游戏的逻辑
+                print("重新开始游戏")
+                self.resetGame()
+                gungi().startGame()
+            else:
+                print("退出游戏")
+                exit()
+            
         else:
-            print("白方勝利")
-            return self.endGame()
-            #return self.endGame()
-        
+            print("玩家勝利")
+            messagebox.showinfo("Game Over", "白方勝利")
+            result = messagebox.askquestion("Restart", "是否要重新開始遊戲？")
+            if result == 'yes':
+                pass
+                # 在这里添加重新开始游戏的逻辑
+                print("重新开始游戏")
+                self.resetGame()
+                gungi().startGame()
+            else:
+                print("退出游戏")
+                exit()
+            
         
 
     def endGame(self):
