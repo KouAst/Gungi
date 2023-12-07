@@ -23,6 +23,7 @@ class gungi():
     tempZFlag = 0
     moveFlag = 0
     attackFlag = 0
+    selectCode = 0
     piece = None
     z_axis = 0
     sound = []
@@ -162,7 +163,7 @@ class gungi():
                 
 
     def exchangeTurn(self,t):
-        gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag, gungi.tempZFlag, gungi.moveFlag, gungi.attackFlag= 0, 0, 0, 0, 0, 0
+        gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag, gungi.tempZFlag, gungi.moveFlag, gungi.attackFlag, gungi.selectCode= 0, 0, 0, 0, 0, 0, 0
         gungi.selectedPiece = None
 
         if t == 1:
@@ -203,6 +204,7 @@ class gungi():
                     gungi.piece = gungi.selectedPiece
                 elif gungi.newpieceFlag == 1:
                     gungi.piece = gungi.selectedPiece
+                    gungi.selectCode = gungi.selectedPiece.piececode
                    
         #self.selectedPiece.bestMove(arr)
         #print(self.selectedPiece.Allrange)
@@ -253,12 +255,13 @@ class gungi():
             elif gungi.z_axis == 0 and arr[x][y][0] == gungi.turnFlag and arr[x][y][1]==0:
                 print("action:stack moving(upper)")
                 gungi.tempZFlag = 1
-                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
-                    self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
-                    #gungi.selectedPiece = None
-                else:
-                    gungi.selectedPiece = None
-                    gungi.moveFlag = 0
+                if (gungi.selectCode == 1 and gungi.turnFlag == 1) or (gungi.selectCode == 11 and gungi.turnFlag == 2):
+                    if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                        self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
+                        #gungi.selectedPiece = None
+                    else:
+                        gungi.selectedPiece = None
+                        gungi.moveFlag = 0
             elif gungi.z_axis == 0 and arr[x][y][0] != gungi.turnFlag and arr[x][y][1] == 0:
                 print("action:attack(0>0)")
                 gungi.attackFlag = 1
@@ -411,6 +414,7 @@ class gungi():
         self.tempZFlag = 0
         self.moveFlag = 0
         self.attackFlag = 0
+        self.selectCode = 0
         self.piece = None
         self.z_axis = 0
         self.sound.clear()
