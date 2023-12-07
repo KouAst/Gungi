@@ -174,13 +174,13 @@ class gungi():
     def select_piece(self, turn, x, y):
         selectFilter = list(filter(lambda piece: piece.x == x and piece.y == y and piece.player == turn , gungi.piecesList))
         arr = pieces.listPiecestoArr(gungi.piecesList)
+        
 
         if gungi.moveFlag == 0:
             if len(selectFilter) == 1:
                 gungi.selectedPiece = selectFilter[0]
                 selectFilter.sort(key=lambda piece: piece.z)
                 gungi.z_axis = selectFilter[0].z
-
                 pieceName = gungi.selectedPiece.__class__.__name__
                 print("Piece:"+ pieceName,";","z_axis:",gungi.z_axis)
                 #return
@@ -194,11 +194,19 @@ class gungi():
                 #return
             else: return
 
+        
+
         if gungi.selectedPiece:
             if(0 <= gungi.selectedPiece.x < 3 and turn == 1 ) or (12 <= gungi.selectedPiece.x < 15 and turn == 2):
                 if gungi.newpieceFlag == 0:
                     gungi.newpieceFlag = 1
                     gungi.piece = gungi.selectedPiece
+                elif gungi.newpieceFlag == 1:
+                    gungi.piece = gungi.selectedPiece
+                   
+        #self.selectedPiece.bestMove(arr)
+        #print(self.selectedPiece.Allrange)
+        
         '''
         else:
             fi = filter(lambda p: p.x == x and p.y == y, gungi.piecesList)
@@ -213,7 +221,7 @@ class gungi():
             elif gungi.moveFlag < 2: 
                 gungi.moveFlag += 1
         
-        if (gungi.newpieceFlag == 1 and gungi.chooseFlag == 1):
+        if gungi.newpieceFlag == 1 and gungi.chooseFlag == 1:
                 self.placement_newpiece(gungi.piece,x,y,arr)
         elif gungi.newpieceFlag == 0 and gungi.moveFlag == 2:
             if gungi.z_axis == 0 and arr[x][y][gungi.z_axis] == 0:
@@ -242,7 +250,7 @@ class gungi():
                 else:
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
-            elif gungi.z_axis == 0 and arr[x][y][0] == gungi.turnFlag:
+            elif gungi.z_axis == 0 and arr[x][y][0] == gungi.turnFlag and arr[x][y][1]==0:
                 print("action:stack moving(upper)")
                 gungi.tempZFlag = 1
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
@@ -293,20 +301,22 @@ class gungi():
                 else:
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
+                    
 
     def placement_newpiece(self, piece, x, y, arr):
-        if arr[x][y][0] == 0:
+        if arr[x][y][0] == 0 and (x>2 and x<12):
             piece.x, piece.y, piece.z = x, y, 0
             self.sound[random.randint(0,5)].play()
             print(str(x)+"-"+str(y)+"-"+str(piece.z)+" "+ str(piece.__class__.__name__)+" new")
             
-            self.exchangeTurn(gungi.turnFlag)
-        elif arr[x][y][0] == gungi.turnFlag and arr[x][y][1] == 0:
+            self.exchangeTurn(self.turnFlag)
+        elif arr[x][y][0] == self.turnFlag and arr[x][y][1] == 0 and (x>2 and x<12):
             piece.x, piece.y, piece.z = x, y, 1
             self.sound[random.randint(0,5)].play()
             print(str(x)+"-"+str(y)+"-"+str(piece.z)+" "+ str(piece.__class__.__name__)+" new")
             
-            self.exchangeTurn(gungi.turnFlag)
+            self.exchangeTurn(self.turnFlag)
+        
 
     def move_piece(self, piece, x, y, z):
         for item in gungi.piecesList:
@@ -324,18 +334,52 @@ class gungi():
         print(str(x)+"-"+str(y)+"-"+str(z)+" "+ piece.__class__.__name__)
         
         self.exchangeTurn(gungi.turnFlag)
+        
         return True
 
     def AI_move(self):
         availd_piece=[]
+        emnemy_piece=[]
+        move_piece=None
         if self.turnFlag == self.p1Color:
-            for self.piece in self.piecesList:
-                if self.piece.player == self.p1Color:
-                    availd_piece.append(self.piece)
+            for piece in self.piecesList:
+                if piece.player == self.p1Color:
+                    availd_piece.append(piece)
+            print("可移動旗子數量: "+str(len(availd_piece)))
             if len(availd_piece)>0:
-                move_piece = availd_piece[random.randint(0,len(availd_piece)-1)]
-                self.select_piece(self.turnFlag,move_piece.x,move_piece.y)
+                for i in range(len(availd_piece)):
+                    availd_piece[i].bestMove(self.piecesList)
                 
+                for enemy in self.piecesList:
+                    if enemy.player==self.p2Color:
+                        emnemy_piece.append((enemy.x,enemy.y))
+                if self.turnFlag == self.p1Color:
+                    for i in range(len(emnemy_piece)):          #進到攻擊範圍便吃棋
+                        for j in range(len(availd_piece)):
+                            if emnemy_piece[i] in availd_piece[j].Allrange:
+                                print("進入吃棋範圍")
+                                move_piece = availd_piece[j]
+                                enemy_x , enemy_y = emnemy_piece[i]
+                                self.select_piece(self.turnFlag,move_piece.x,move_piece.y)
+                                self.select_piece(self.turnFlag,enemy_x,enemy_y)
+                                break
+                    
+                print("隨機選擇移動")        
+                move_piece = random.choice(availd_piece)
+                move_piece.bestMove(self.piecesList)
+                print("move_piece: "+str(move_piece.Allrange))
+                if move_piece.Allrange:
+                    AI_x,AI_y = random.choice(move_piece.Allrange)
+                    self.select_piece(self.turnFlag,move_piece.x,move_piece.y)
+                    self.select_piece(self.turnFlag,AI_x,AI_y)
+                    
+                                
+                
+                            
+                                    
+                    
+                
+                '''    
                 if move_piece.z==0:
                     if move_piece.__class__.__name__ == "Shinobi":
                         self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
@@ -354,8 +398,9 @@ class gungi():
                         self.select_piece(self.turnFlag,random.randint(3,11),random.randint(0,8))
                     else:
                         self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
-        else:
-            return
+            '''
+            else:
+                return
 
     def resetGame(self):
 
@@ -400,7 +445,7 @@ class gungi():
                 self.resetGame()
                 gungi().startGame()
             else:
-                print("退出游戏")
+                print("退出遊戲")
                 exit()
             
         else:
@@ -414,7 +459,7 @@ class gungi():
                 self.resetGame()
                 gungi().startGame()
             else:
-                print("退出游戏")
+                print("退出遊戲")
                 exit()
             
         

@@ -13,6 +13,7 @@ class Pieces():
         self.rect = self.image.get_rect()
         self.rect.left = x * constants.square_size + 10
         self.rect.top = y * constants.square_size + 10
+        self.Allrange = []
 
     def displayPieces(self, screen):
         self.rect.left = self.x * constants.square_size + 10
@@ -31,6 +32,9 @@ class Pieces():
     def moveRange(self, screen):
         pass
     
+    def bestMove(self):
+        pass
+
 class King(Pieces):
     def __init__(self, piececode, player, x, y, z):
         self.player = player
@@ -50,6 +54,7 @@ class King(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        
         if abs(x) + abs(y) == 1: return True
         elif (x == 1) and (y == -1): return True
         elif (x == -1) and (y == -1): return True
@@ -69,7 +74,19 @@ class King(Pieces):
             pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
             pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
             pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
-        
+
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
+                        
+
 class Prince(Pieces):
     def __init__(self, piececode, player, x, y, z):
         self.player = player
@@ -89,12 +106,32 @@ class Prince(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        temp = None
         #if((abs(x) == 1 and abs(y) == 0) or (abs(x) == 0 and abs(y) == 1)): return True  #前後左右有限制
-        if (((movex>=12 or movex<=12) and y==0) or (x==0 and (movey>=0 or movey<=9))): return True #無限制
+        if ((movex>=3 and movex<=12) and y==0):#無限制
+            '''
+            for i in range(1,abs(x)):
+                
+                if x > 0:
+                    if arr[self.x+i][movey][0]!=0:
+                        temp = i    
+                else:
+                    if arr[self.x-i][movey][0]!=0:
+                        temp = i
+            if self.x > movex:
+                if temp == None: temp = 3
+                if(movex>=temp and movex <self.x):
+                    return True 
+            elif self.x < movex:
+                if temp == None: temp = 12
+                if(movex>self.x and movex<=temp):
+                    return True
+            '''  
+            return True  
+        if (x==0 and (movey>=0 and movey<=9)): return True
         if (abs(x) == 1 and abs(y) == 1): return True
         if (self.z == 1):
-            if(abs(x) == 2 and abs(y) == 2): return True
-            
+            if(abs(x) == 2 and abs(y) == 2 and arr[int((self.x+movex)/2)][int((self.y+movey)/2)][0]==0): return True
         
     def moveRange(self, screen):
         x = self.x * constants.square_size
@@ -128,6 +165,17 @@ class Prince(Pieces):
                 if(self.x<10):
                     pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
                     pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
 
 class Duke(Pieces):
     def __init__(self, piececode, player, x, y, z):
@@ -177,6 +225,17 @@ class Duke(Pieces):
             if(x-constants.r2 > 2*constants.square_size):
                 pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
                 pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
 
 class Spear(Pieces):
     def __init__(self, piececode, player, x, y, z):
@@ -252,6 +311,17 @@ class Spear(Pieces):
                 if(x-constants.r2 > 2*constants.square_size):
                     pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
 
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
+
 class Shinobi(Pieces):
     def __init__(self, piececode, player, x, y, z):
         self.player = player
@@ -299,6 +369,16 @@ class Shinobi(Pieces):
                 pygame.draw.rect(screen, constants.range_color, (x-constants.r3, y+constants.r3, constants.square_size, constants.square_size),5)
                 pygame.draw.rect(screen, constants.range_color, (x-constants.r3, y-constants.r3, constants.square_size, constants.square_size),5)
 
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
 
 class Soldier(Pieces):
     def __init__(self, piececode, player, x, y, z):
@@ -331,7 +411,18 @@ class Soldier(Pieces):
         if(self.z== 1):
             pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
             pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
-        
+
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
+
 class Fort(Pieces):
     def __init__(self, piececode, player, x, y, z):
         self.player = player
@@ -404,6 +495,17 @@ class Fort(Pieces):
                     pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
                     pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
 
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
+
 class Samurai(Pieces):
     def __init__(self, piececode, player, x, y, z):
         self.player = player
@@ -467,6 +569,17 @@ class Samurai(Pieces):
                     pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
                 if(x-constants.r2 > 2*constants.square_size):
                     pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
 
 class Captain(Pieces):
     def __init__(self, piececode, player, x, y, z):
@@ -544,6 +657,17 @@ class Captain(Pieces):
                     pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
                     pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
 
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
+
 class Cavalry(Pieces):
     def __init__(self, piececode, player, x, y, z):
         self.player = player
@@ -588,6 +712,17 @@ class Cavalry(Pieces):
                 pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y, constants.square_size, constants.square_size),5)
             if(x-constants.r2 > 2*constants.square_size):
                 pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
+
+    def bestMove(self, arr):
+        self.Allrange.clear()
+
+        for i in range(3,13):
+            for j in range(0,9):
+                for k in range(0,2):
+                    if self.canMove(arr,i,j,k)==True:
+                        temp = (i,j)
+                        if temp not in self.Allrange:
+                            self.Allrange.append((i,j))
 
 def listPiecestoArr(piecesList):
     arr = [[[0 for k in range(2)] for i in range(9)] for j in range(15)]
