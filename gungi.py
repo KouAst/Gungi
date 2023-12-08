@@ -24,6 +24,7 @@ class gungi():
     moveFlag = 0
     attackFlag = 0
     selectCode = 0
+    checkFlag = None
     piece = None
     z_axis = 0
     sound = []
@@ -165,14 +166,18 @@ class gungi():
     def exchangeTurn(self,t):
         gungi.newpieceFlag, gungi.z_axis, gungi.chooseFlag, gungi.tempZFlag, gungi.moveFlag, gungi.attackFlag, gungi.selectCode= 0, 0, 0, 0, 0, 0, 0
         gungi.selectedPiece = None
+        gungi.checkFlag = None
+        gungi.piece = None
 
         if t == 1:
             gungi.turnFlag = 2
+            print("exchange 2")
         elif t == 2:
-            gungi.turnFlag = 1       
-
+            gungi.turnFlag = 1
+            print("exchange 1")      
 
     def select_piece(self, turn, x, y):
+        print("F1:",gungi.newpieceFlag,"F2:",gungi.chooseFlag)
         selectFilter = list(filter(lambda piece: piece.x == x and piece.y == y and piece.player == turn , gungi.piecesList))
         arr = pieces.listPiecestoArr(gungi.piecesList)
         
@@ -189,11 +194,10 @@ class gungi():
                 gungi.selectedPiece = selectFilter[1]
                 selectFilter.sort(key=lambda piece: piece.z)
                 gungi.z_axis = selectFilter[1].z
-
                 pieceName = gungi.selectedPiece.__class__.__name__
                 print("Piece:"+ pieceName,";","z_axis:",gungi.z_axis)
                 #return
-            else: return
+            else: return            
 
         
 
@@ -204,7 +208,6 @@ class gungi():
                     gungi.piece = gungi.selectedPiece
                 elif gungi.newpieceFlag == 1:
                     gungi.piece = gungi.selectedPiece
-                    gungi.selectCode = gungi.selectedPiece.piececode
                    
         #self.selectedPiece.bestMove(arr)
         #print(self.selectedPiece.Allrange)
@@ -217,7 +220,7 @@ class gungi():
                 gungi.selectedPiece = listfi[0]
         '''
 
-        if x >= 3 and x <= 11 and y>=0:
+        if x >= 3 and x <= 11 and y >=0 :
             if gungi.newpieceFlag == 1:
                 gungi.chooseFlag = 1
             elif gungi.moveFlag < 2: 
@@ -226,6 +229,24 @@ class gungi():
         if gungi.newpieceFlag == 1 and gungi.chooseFlag == 1:
                 self.placement_newpiece(gungi.piece,x,y,arr)
         elif gungi.newpieceFlag == 0 and gungi.moveFlag == 2:
+            if len(selectFilter) == 1:
+                gungi.checkFlag = selectFilter[0]
+                selectFilter.sort(key=lambda piece: piece.z)
+                gungi.z_axis = selectFilter[0].z
+                gungi.selectCode = gungi.checkFlag.piececode
+                print("pieceCode:",gungi.selectCode)
+                #return
+            elif len(selectFilter) == 2:
+                gungi.checkFlag = selectFilter[1]
+                selectFilter.sort(key=lambda piece: piece.z)
+                gungi.z_axis = selectFilter[1].z
+                gungi.selectCode = gungi.checkFlag.piececode
+                print("pieceCode:",gungi.selectCode)
+                #return
+            else: 
+                gungi.selectCode = 0
+                print("pieceCode:","0")
+
             if gungi.z_axis == 0 and arr[x][y][gungi.z_axis] == 0:
                 print("action:moving")
                 if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
@@ -252,16 +273,15 @@ class gungi():
                 else:
                     gungi.selectedPiece = None
                     gungi.moveFlag = 0
-            elif gungi.z_axis == 0 and arr[x][y][0] == gungi.turnFlag and arr[x][y][1]==0:
+            elif gungi.z_axis == 0 and arr[x][y][0] == gungi.turnFlag and arr[x][y][1]==0 and ((gungi.selectCode != 1 and gungi.turnFlag == 1) or (gungi.selectCode != 11 and gungi.turnFlag == 2)):
                 print("action:stack moving(upper)")
                 gungi.tempZFlag = 1
-                if (gungi.selectCode == 1 and gungi.turnFlag == 1) or (gungi.selectCode == 11 and gungi.turnFlag == 2):
-                    if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
-                        self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
-                        #gungi.selectedPiece = None
-                    else:
-                        gungi.selectedPiece = None
-                        gungi.moveFlag = 0
+                if gungi.selectedPiece.canMove(arr, x, y, gungi.z_axis):
+                    self.move_piece(gungi.selectedPiece, x, y, gungi.tempZFlag)
+                    #gungi.selectedPiece = None
+                else:
+                    gungi.selectedPiece = None
+                    gungi.moveFlag = 0
             elif gungi.z_axis == 0 and arr[x][y][0] != gungi.turnFlag and arr[x][y][1] == 0:
                 print("action:attack(0>0)")
                 gungi.attackFlag = 1
@@ -415,6 +435,7 @@ class gungi():
         self.moveFlag = 0
         self.attackFlag = 0
         self.selectCode = 0
+        self.checkFlag = None
         self.piece = None
         self.z_axis = 0
         self.sound.clear()
