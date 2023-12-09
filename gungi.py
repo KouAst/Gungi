@@ -177,7 +177,6 @@ class gungi():
             print("exchange 1")      
 
     def select_piece(self, turn, x, y):
-        print("F1:",gungi.newpieceFlag,"F2:",gungi.chooseFlag)
         selectFilter = list(filter(lambda piece: piece.x == x and piece.y == y and piece.player == turn , gungi.piecesList))
         arr = pieces.listPiecestoArr(gungi.piecesList)
         
@@ -197,8 +196,9 @@ class gungi():
                 pieceName = gungi.selectedPiece.__class__.__name__
                 print("Piece:"+ pieceName,";","z_axis:",gungi.z_axis)
                 #return
-            else: return            
-
+            elif len(selectFilter) == 0 and gungi.newpieceFlag == 1:
+                pass
+            else: return
         
 
         if gungi.selectedPiece:
@@ -220,14 +220,24 @@ class gungi():
                 gungi.selectedPiece = listfi[0]
         '''
 
-        if x >= 3 and x <= 11 and y >=0 :
+        if x >= 3 and x <= 11 and y >=0:
             if gungi.newpieceFlag == 1:
                 gungi.chooseFlag = 1
-            elif gungi.moveFlag < 2: 
+            elif gungi.moveFlag < 2:
                 gungi.moveFlag += 1
         
         if gungi.newpieceFlag == 1 and gungi.chooseFlag == 1:
-                self.placement_newpiece(gungi.piece,x,y,arr)
+                if len(selectFilter) == 1:
+                    gungi.checkFlag = selectFilter[0]
+                    selectFilter.sort(key=lambda piece: piece.z)
+                    gungi.z_axis = selectFilter[0].z
+                    gungi.selectCode = gungi.checkFlag.piececode
+                    print("pieceCode:",gungi.selectCode)
+                    #return
+                else: 
+                    gungi.selectCode = 0
+                    print("pieceCode:","0")
+                self.placement_newpiece(gungi.piece,x,y,arr,gungi.selectCode)
         elif gungi.newpieceFlag == 0 and gungi.moveFlag == 2:
             if len(selectFilter) == 1:
                 gungi.checkFlag = selectFilter[0]
@@ -326,14 +336,14 @@ class gungi():
                     gungi.moveFlag = 0
                     
 
-    def placement_newpiece(self, piece, x, y, arr):
+    def placement_newpiece(self, piece, x, y, arr, selectcode):
         if arr[x][y][0] == 0 and (x>2 and x<12):
             piece.x, piece.y, piece.z = x, y, 0
             self.sound[random.randint(0,5)].play()
             print(str(x)+"-"+str(y)+"-"+str(piece.z)+" "+ str(piece.__class__.__name__)+" new")
             
             self.exchangeTurn(self.turnFlag)
-        elif arr[x][y][0] == self.turnFlag and arr[x][y][1] == 0 and (x>2 and x<12):
+        elif arr[x][y][0] == self.turnFlag and arr[x][y][1] == 0 and (x>2 and x<12) and ((selectcode != 1 and gungi.turnFlag == 1) or (selectcode != 11 and gungi.turnFlag == 2)):
             piece.x, piece.y, piece.z = x, y, 1
             self.sound[random.randint(0,5)].play()
             print(str(x)+"-"+str(y)+"-"+str(piece.z)+" "+ str(piece.__class__.__name__)+" new")
