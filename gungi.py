@@ -29,25 +29,27 @@ class gungi():
     z_axis = 0
     sound = []
     piecesList = []
+    clock = 0
     
-
     
 
     def startGame(self):
         pygame.init()
         pygame.mixer.init()
-        gungi.window = pygame.display.set_mode((constants.screen_width,constants.screen_height))#,pygame.RESIZABLE)
+        gungi.window = pygame.display.set_mode((constants.screen_width,constants.screen_height)) # ,pygame.RESIZABLE)
         pygame.display.set_caption('Gungi')        
         self.pieceInit()
         self.soundInit()
-        
+        print("玩家回合")
+
         while True:
             time.sleep(0.2)
             self.drawBoard()
             self.pieceDisplay()
             self.wingame() 
             #self.Instructions()
-            self.AI_move()
+            if self.turnFlag == self.p1Color:
+                self.AI_move()
             self.getEvent()
             self.rangeDisplay()
             pygame.display.update()
@@ -131,6 +133,7 @@ class gungi():
                 gungi.selectedPiece.moveRange(self.window)
             pygame.draw.rect(self.window, constants.choose_color,(gungi.selectedPiece.x*80, gungi.selectedPiece.y*80, constants.square_size, constants.square_size),5)
             
+    
     '''
     def Instructions(self):
         
@@ -171,10 +174,10 @@ class gungi():
 
         if t == 1:
             gungi.turnFlag = 2
-            print("exchange 2")
+            print("玩家回合")
         elif t == 2:
             gungi.turnFlag = 1
-            print("exchange 1")      
+            print("電腦回合")      
 
     def select_piece(self, turn, x, y):
         selectFilter = list(filter(lambda piece: piece.x == x and piece.y == y and piece.player == turn , gungi.piecesList))
@@ -208,9 +211,6 @@ class gungi():
                     gungi.piece = gungi.selectedPiece
                 elif gungi.newpieceFlag == 1:
                     gungi.piece = gungi.selectedPiece
-                   
-        #self.selectedPiece.bestMove(arr)
-        #print(self.selectedPiece.Allrange)
         
         '''
         else:
@@ -374,6 +374,8 @@ class gungi():
         availd_piece=[]
         emnemy_piece=[]
         move_piece=None
+        if self.turnFlag == self.p2Color:
+            return 
         if self.turnFlag == self.p1Color:
             for piece in self.piecesList:
                 if piece.player == self.p1Color:
@@ -382,58 +384,47 @@ class gungi():
             if len(availd_piece)>0:
                 for i in range(len(availd_piece)):
                     availd_piece[i].bestMove(self.piecesList)
-                
+                emnemy_piece = [(enemy.x, enemy.y) for enemy in self.piecesList if enemy.player == self.p2Color]
+
+                for enemy_x, enemy_y in emnemy_piece:
+                    for piece in availd_piece:
+                        if (enemy_x, enemy_y) in piece.Allrange:
+                            move_piece = piece
+                            self.select_piece(self.turnFlag, move_piece.x, move_piece.y)
+                            self.select_piece(self.turnFlag, enemy_x, enemy_y)
+                            break
+                '''
                 for enemy in self.piecesList:
                     if enemy.player==self.p2Color:
                         emnemy_piece.append((enemy.x,enemy.y))
-                if self.turnFlag == self.p1Color:
-                    for i in range(len(emnemy_piece)):          #進到攻擊範圍便吃棋
-                        for j in range(len(availd_piece)):
-                            if emnemy_piece[i] in availd_piece[j].Allrange:
-                                print("進入吃棋範圍")
-                                move_piece = availd_piece[j]
-                                enemy_x , enemy_y = emnemy_piece[i]
-                                self.select_piece(self.turnFlag,move_piece.x,move_piece.y)
-                                self.select_piece(self.turnFlag,enemy_x,enemy_y)
-                                break
-                    
-                print("隨機選擇移動")        
-                move_piece = random.choice(availd_piece)
-                move_piece.bestMove(self.piecesList)
+                
+                for i in range(len(emnemy_piece)):          #進到攻擊範圍便吃棋
+                    for j in range(len(availd_piece)):
+                        if emnemy_piece[i] in availd_piece[j].Allrange:
+                            #print("進入吃棋範圍")
+                            move_piece = availd_piece[j]
+                            enemy_x , enemy_y = emnemy_piece[i]
+                            self.select_piece(self.turnFlag,move_piece.x,move_piece.y)                  
+                            self.select_piece(self.turnFlag,enemy_x,enemy_y)
+                            break
+                '''    
+                if not move_piece:
+                    print("隨機選擇移動")        
+                    move_piece = random.choice(availd_piece)
+                    print(move_piece.__class__.__name__)
+                    if move_piece.x < 3 or move_piece.x > 11:
+                        arr = pieces.listPiecestoArr(self.piecesList)
+                        self.select_piece(self.turnFlag,move_piece.x,move_piece.y)
+                        self.placement_newpiece(move_piece,random.randint(3,11),random.randint(0,8),arr,self.selectCode)
+                    else:
+                        move_piece.bestMove(self.piecesList)
+                        
                 print("move_piece: "+str(move_piece.Allrange))
                 if move_piece.Allrange:
                     AI_x,AI_y = random.choice(move_piece.Allrange)
                     self.select_piece(self.turnFlag,move_piece.x,move_piece.y)
-                    self.select_piece(self.turnFlag,AI_x,AI_y)
-                    
+                    self.select_piece(self.turnFlag,AI_x,AI_y)  
                                 
-                
-                            
-                                    
-                    
-                
-                '''    
-                if move_piece.z==0:
-                    if move_piece.__class__.__name__ == "Shinobi":
-                        self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
-                    elif move_piece.__class__.__name__ == "Spear":
-                        self.select_piece(self.turnFlag,random.randint(move_piece.x-1,move_piece.x+1),random.randint(move_piece.y-1,move_piece.y+2))
-                    elif move_piece.__class__.__name__ == ("Prince" or "Duke"):
-                        self.select_piece(self.turnFlag,random.randint(3,11),random.randint(0,8))
-                    else:
-                        self.select_piece(self.turnFlag,random.randint(move_piece.x-1,move_piece.x+1),random.randint(move_piece.y-1,move_piece.y+1))
-                if move_piece.z==1:
-                    if move_piece.__class__.__name__ == "Shinobi":
-                        self.select_piece(self.turnFlag,random.randint(move_piece.x-3,move_piece.x+3),random.randint(move_piece.y-3,move_piece.y+3))
-                    elif move_piece.__class__.__name__ == "Spear":
-                        self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+3))
-                    elif move_piece.__class__.__name__ == ("Prince" or "Duke"):
-                        self.select_piece(self.turnFlag,random.randint(3,11),random.randint(0,8))
-                    else:
-                        self.select_piece(self.turnFlag,random.randint(move_piece.x-2,move_piece.x+2),random.randint(move_piece.y-2,move_piece.y+2))
-            '''
-            else:
-                return
 
     def resetGame(self):
 
@@ -500,8 +491,11 @@ class gungi():
         
 
     def endGame(self):
-        print("關閉")
-        exit()
+        result = messagebox.askquestion("", "確定要離開遊戲？")
+        if result == 'yes':
+            exit()
+        else:
+            return
 
 
 if __name__ == '__main__':

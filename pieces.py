@@ -14,6 +14,7 @@ class Pieces():
         self.rect.left = x * constants.square_size + 10
         self.rect.top = y * constants.square_size + 10
         self.Allrange = []
+        
 
     def displayPieces(self, screen):
         self.rect.left = self.x * constants.square_size + 10
@@ -61,6 +62,13 @@ class King(Pieces):
         elif (x == -1) and (y == 1): return True
         elif (x == 1) and (y == 1): return True 
     
+        if (self.z==1):
+            if (abs(x)==2 and abs (y) == 0) or (abs(x)==0 and abs (y) == 2): return True
+            elif (x == 2) and (y == -2): return True
+            elif (x == -2) and (y == -2): return True
+            elif (x == -2) and (y == 2): return True
+            elif (x == 2) and (y == 2): return True 
+
     def moveRange(self, screen):
         x = self.x * constants.square_size
         y = self.y * constants.square_size
@@ -74,7 +82,21 @@ class King(Pieces):
             pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y+constants.r1, constants.square_size, constants.square_size),5)
             pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y, constants.square_size, constants.square_size),5)
             pygame.draw.rect(screen, constants.range_color, (x-constants.r1, y-constants.r1, constants.square_size, constants.square_size),5)
-
+        if(self.z == 1):
+            if(x+constants.r2 <= 12*constants.square_size):
+                if(self.x>4):
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+                if(self.x<10):
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y+constants.r2, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)        
+                pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x-constants.r2, y, constants.square_size, constants.square_size),5)
+                if(x-constants.r2 > 2*constants.square_size):
+                    pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+                    pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
+    
+    
     def bestMove(self, arr):
         self.Allrange.clear()
 
@@ -106,33 +128,33 @@ class Prince(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
-        temp = None
-        #if((abs(x) == 1 and abs(y) == 0) or (abs(x) == 0 and abs(y) == 1)): return True  #前後左右有限制
-        if ((movex>=3 and movex<=12) and y==0):#無限制
-            '''
-            for i in range(1,abs(x)):
-                
-                if x > 0:
-                    if arr[self.x+i][movey][0]!=0:
-                        temp = i    
-                else:
-                    if arr[self.x-i][movey][0]!=0:
-                        temp = i
-            if self.x > movex:
-                if temp == None: temp = 3
-                if(movex>=temp and movex <self.x):
-                    return True 
-            elif self.x < movex:
-                if temp == None: temp = 12
-                if(movex>self.x and movex<=temp):
-                    return True
-            '''  
+        min_Xrange = 3
+        max_Xrange = 11
+        min_Yrange = 0
+        max_Yrange = 8
+        if any(isinstance(piece, Pieces) for piece in arr): #若listPiecestoArr未運作
+            arr = listPiecestoArr(arr)
+        
+        for piece in range(3,12):
+            if arr[piece][movey][0]:
+                if (piece  < self.x) and (piece > min_Xrange):
+                    min_Xrange = piece            
+                if (piece  > self.x) and (piece < max_Xrange):
+                    max_Xrange = piece  
+        for piece in range(0,9):            
+            if arr[movex][piece][0]:
+                if (piece  < self.y) and (piece > min_Yrange):
+                    min_Yrange = piece
+                if (piece  > self.y) and (piece < max_Yrange):
+                    max_Yrange = piece
+            
+        if ((movex>=min_Xrange and movex<=max_Xrange) and y==0):     #無限制
             return True  
-        if (x==0 and (movey>=0 and movey<=9)): return True
-        if (abs(x) == 1 and abs(y) == 1): return True
+        elif (x==0 and (movey>=min_Yrange and movey<=max_Yrange)): return True
+        elif (abs(x) == 1 and abs(y) == 1): return True
         if (self.z == 1):
             if(abs(x) == 2 and abs(y) == 2 and arr[int((self.x+movex)/2)][int((self.y+movey)/2)][0]==0): return True
-        
+
     def moveRange(self, screen):
         x = self.x * constants.square_size
         y = self.y * constants.square_size
@@ -196,11 +218,38 @@ class Duke(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        min_Xrange = 3  
+        max_Xrange = 11  
+        min_Yrange = 0
+        max_Yrange = 9
+        if any(isinstance(piece, Pieces) for piece in arr): #若listPiecestoArr未運作
+            arr = listPiecestoArr(arr)
+
+        for piece in range(3,12):
+            if arr[piece][movey][0]:
+                if (piece  < self.x) and (piece > min_Xrange):
+                    min_Xrange = piece            
+                if (piece  > self.x) and (piece < max_Xrange):
+                    max_Xrange = piece  
+        for piece in range(0,9):            
+            if arr[movex][piece][0]:
+                if (piece  < self.y) and (piece > min_Yrange):
+                    min_Yrange = piece
+                if (piece  > self.y) and (piece < max_Yrange):
+                    max_Yrange = piece    
         if((abs(x) == 1 and abs(y) == 0) or abs(x) == 0 and abs(y) == 1): return True
-        #if (abs(x) == 1 and abs(y) == 1): return True
-        if (abs(x) == abs(y)): return True
+        
+        elif (abs(x) == abs(y)):
+            for i in range(1, abs(x)):
+                if arr[self.x + i * (x//abs(x))][self.y + i * (y//abs(y))][0] != 0:
+                    return False
+            return True
+    
         if (self.z == 1):
-            if((abs(x) == 2 and abs(y) == 0) or (abs(x)==0 and abs(y)==2)): return True
+            if(abs(x) == 2 and abs(y) == 0) and arr[int((self.x+movex)/2)][self.y][0]==0:
+                return True
+            elif(abs(x)==0 and abs(y)==2) and arr[self.x][int((self.y+movey)/2)][0]==0: 
+                return True
         
     def moveRange(self, screen):
         x = self.x * constants.square_size
@@ -256,27 +305,31 @@ class Spear(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        if any(isinstance(piece, Pieces) for piece in arr): #若listPiecestoArr未運作
+            arr = listPiecestoArr(arr)
+
         if(self.player == constants.p1Color):
             if(x == 0) and (abs(y) == 1): return True
-            elif(x == 0) and (y == 2): return True
-            elif(x == 1) and (y == 1): return True
-            elif(x == -1) and (y == 1): return True
+            if(x == 0) and (y == 2) and arr[movex][(self.y+movey)//2][0]==0: return True
+            if(x == 1) and (y == 1): return True
+            if(x == -1) and (y == 1): return True
             if(self.z == 1):
-                if(x == 0) and (y == -2): return True
-                elif(x == 0) and (y == 3): return True
-                elif(x == 2) and (y == 2): return True
-                elif(x == -2) and (y == 2): return True
+                if(x == 0) and (y == -2) and arr[movex][(self.y+movey)//2][0]==0: return True
+                if(x == 0) and (y == 3) and (arr[movex][(self.y+movey)//2][0]==0 or arr[movex][(self.y+movey)//2+1][0]==0): return True
+                if(x == 2) and (y == 2) and arr[(self.x+movex)//2][(self.y+movey)//2][0]==0: return True
+                if(x == -2) and (y == 2) and arr[(self.x+movex)//2][(self.y+movey)//2][0]==0: return True
         if(self.player == constants.p2Color):
             if(x == 0) and (abs(y) == 1): return True
-            elif(x == 0) and (y == -2): return True
-            elif(x == 1) and (y == -1): return True
-            elif(x == -1) and (y == -1): return True
+            if(x == 0) and (y == -2) and arr[movex][(self.y+movey)//2][0]==0: return True
+            if(x == 1) and (y == -1): return True
+            if(x == -1) and (y == -1): return True
             if(self.z == 1):
-                if(x == 0) and (y == 2): return True
-                elif(x == 0) and (y == -3): return True
-                elif(x == 2) and (y == -2): return True
-                elif(x == -2) and (y == -2): return True
+                if(x == 0) and (y == 2) and arr[movex][(self.y+movey)//2][0]==0: return True
+                if(x == 0) and (y == -3) and arr[movex][(self.y+movey)//2][0]==0 and arr[movex][(self.y+movey)//2+1][0]==0: return True
+                if(x == 2) and (y == -2) and arr[(movex+self.x)//2][(self.y+movey)//2][0]==0: return True
+                if(x == -2) and (y == -2) and arr[(movex+self.x)//2][(self.y+movey)//2][0]==0: return True
     
+        
     def moveRange(self, screen):
         x = self.x * constants.square_size
         y = self.y * constants.square_size
@@ -306,6 +359,7 @@ class Spear(Pieces):
             if(self.z == 1):
                 pygame.draw.rect(screen, constants.range_color, (x, y-constants.r2, constants.square_size, constants.square_size),5)
                 pygame.draw.rect(screen, constants.range_color, (x, y+constants.r2, constants.square_size, constants.square_size),5)
+                pygame.draw.rect(screen, constants.range_color, (x, y-constants.r3, constants.square_size, constants.square_size),5)
                 if(x+constants.r2 < 12*constants.square_size):
                     pygame.draw.rect(screen, constants.range_color, (x+constants.r2, y-constants.r2, constants.square_size, constants.square_size),5)
                 if(x-constants.r2 > 2*constants.square_size):
@@ -341,10 +395,17 @@ class Shinobi(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        if any(isinstance(piece, Pieces) for piece in arr): #若listPiecestoArr未運作
+            arr = listPiecestoArr(arr)
+
         if(abs(x)==1 and abs(y)==1): return True
-        if(abs(x)==2 and abs(y)==2): return True
+        if(abs(x)==2 and abs(y)==2) and arr[(self.x+movex)//2][(self.y+movey)//2][0]==0: return True
         if(self.z == 1):
-            if(abs(x)==3 and abs(y)==3): return True
+            if(abs(x)==3 and abs(y)==3):
+                if(arr[(self.x+movex)//2][(self.y+movey)//2][0]==0 and arr[(self.x+movex)//2+1][(self.y+movey)//2+1][0]==0 and self.x > movex and self.y > movey): return True #斜左上
+                elif(arr[(self.x+movex)//2+1][(self.y+movey)//2][0]==0 and arr[(self.x+movex)//2][(self.y+movey)//2+1][0]==0 and self.x > movex and self.y < movey): return True #斜左下
+                elif(arr[(self.x+movex)//2][(self.y+movey)//2+1][0]==0 and arr[(self.x+movex)//2+1][(self.y+movey)//2][0]==0 and self.x < movex and self.y > movey): return True #右上
+                elif(arr[(self.x+movex)//2][(self.y+movey)//2][0]==0 and arr[(self.x+movex)//2+1][(self.y+movey)//2+1][0]==0 and self.x < movex and self.y < movey): return True #右下
     
     def moveRange(self, screen):
         x = self.x * constants.square_size
@@ -399,9 +460,11 @@ class Soldier(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        if any(isinstance(piece, Pieces) for piece in arr): #若listPiecestoArr未運作
+            arr = listPiecestoArr(arr)
         if (abs(x)== 0 and abs(y)==1): return True
         if (self.z ==1):
-            if(abs(x)== 0 and abs(y)==2): return True
+            if(abs(x)== 0 and abs(y)==2) and arr[movex][(self.y+movey)//2][0]==0: return True
     
     def moveRange(self, screen):
         x = self.x * constants.square_size
@@ -442,22 +505,25 @@ class Fort(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        if any(isinstance(piece, Pieces) for piece in arr): #若listPiecestoArr未運作
+            arr = listPiecestoArr(arr)
+
         if(self.player == constants.p1Color):
             if(x == 0 and y == 1): return True
             if(abs(x) == 1 and y == 0): return True
             if(abs(x) == 1 and y == -1): return True
             if(self.z == 1):
-                if(x == 0 and y == 2): return True
+                if(x == 0 and y == 2) and arr[movex][(self.y+movey)//2][0]==0: return True
                 if(abs(x) == 2 and y == 0): return True
-                if(abs(x) == 2 and y == -2): return True
+                if(abs(x) == 2 and y == -2) and arr[(self.x+movex)//2][(self.y+movey)//2][0]==0: return True
         if(self.player == constants.p2Color):
             if(x == 0 and y == -1): return True
             if(abs(x) == 1 and y == 0): return True
             if(abs(x) == 1 and y == 1): return True
             if(self.z == 1):
                 if(x == 0 and y == -2): return True
-                if(abs(x) == 2 and y == 0): return True
-                if(abs(x) == 2 and y == 2): return True  
+                if(abs(x) == 2 and y == 0) and arr[(self.x+movex)//2][movey][0]==0: return True
+                if(abs(x) == 2 and y == 2) and arr[(self.x+movex)//2][(self.y+movey)//2][0]==0: return True  
 
     def moveRange(self, screen):
         x = self.x * constants.square_size
@@ -525,19 +591,22 @@ class Samurai(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        if any(isinstance(piece, Pieces) for piece in arr): #若listPiecestoArr未運作
+            arr = listPiecestoArr(arr)
+
         if(self.player == constants.p1Color):
             if(x == 0 and abs(y) == 1): return True
             if(abs(x) == 1 and y == 1): return True
             if(self.z == 1):
-                if(x == 0 and abs(y) == 2): return True
-                if(abs(x) == 2 and y == 2): return True
+                if(x == 0 and abs(y) == 2) and arr[movex][(self.y+movey)//2][0]==0: return True
+                if(abs(x) == 2 and y == 2) and arr[(self.x+movex)//2][(self.y+movey)//2][0]==0: return True
         if(self.player == constants.p2Color):
             if(x == 0 and abs(y) == 1): return True
             if(abs(x) == 1 and y == -1): return True
             if(self.z == 1):
-                if(x == 0 and abs(y) == 2): return True
-                if(abs(x) == 2 and y == -2): return True        
-
+                if(x == 0 and abs(y) == 2) and arr[movex][(self.y+movey)//2][0]==0: return True
+                if(abs(x) == 2 and y == -2) and arr[(self.x+movex)//2][(self.y+movey)//2][0]==0: return True        
+ 
     def moveRange(self, screen):
         x = self.x * constants.square_size
         y = self.y * constants.square_size
@@ -600,22 +669,25 @@ class Captain(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        if any(isinstance(piece, Pieces) for piece in arr): #若listPiecestoArr未運作
+            arr = listPiecestoArr(arr)
+
         if(self.player == constants.p1Color):
             if(x == 0 and abs(y) == 1): return True
             if(abs(x) == 1 and y == 1): return True
             if(abs(x) == 1 and y == 0): return True
             if(self.z == 1):
-                if(x == 0 and abs(y) == 2): return True
-                if(abs(x) == 2 and y == 2): return True
-                if(abs(x) == 2 and y == 0): return True
+                if(x == 0 and abs(y) == 2) and arr[movex][(self.y+movey)//2][0]==0: return True
+                if(abs(x) == 2 and y == 2) and arr[(self.x+movex)//2][(self.y+movey)//2][0]==0: return True
+                if(abs(x) == 2 and y == 0) and arr[(self.x+movex)//2][movey][0]==0: return True
         if(self.player == constants.p2Color):
             if(x == 0 and abs(y) == 1): return True
             if(abs(x) == 1 and y == -1): return True
             if(abs(x) == 1 and y == 0): return True
             if(self.z == 1):
-                if(x == 0 and abs(y) == 2): return True
-                if(abs(x) == 2 and y == -2): return True
-                if(abs(x) == 2 and y == 0): return True
+                if(x == 0 and abs(y) == 2) and arr[movex][(self.y+movey)//2][0]==0: return True
+                if(abs(x) == 2 and y == -2) and arr[(self.x+movex)//2][(self.y+movey)//2][0]==0: return True
+                if(abs(x) == 2 and y == 0) and arr[(self.x+movex)//2][movey][0]==0: return True
 
     def moveRange(self, screen):
         x = self.x * constants.square_size
@@ -687,12 +759,14 @@ class Cavalry(Pieces):
             #return True
         x = movex - self.x
         y = movey - self.y
+        if any(isinstance(piece, Pieces) for piece in arr): #若listPiecestoArr未運作
+            arr = listPiecestoArr(arr)
         if(x == 0 and abs(y) == 1): return True
-        if(x == 0 and abs(y) == 2): return True
+        if(x == 0 and abs(y) == 2) and arr[movex][(self.y+movey)//2][0]==0: return True
         if(abs(x) == 1 and y == 0): return True
         if(self.z == 1):
-            if(x == 0 and abs(y) == 3): return True
-            if(abs(x) == 2 and y == 0): return True
+            if(x == 0 and abs(y) == 3) and arr[movex][(self.y+movey)//2][0]==0 and arr[movex][(self.y+movey)//2+1][0]==0: return True
+            if(abs(x) == 2 and y == 0) and arr[(self.x+movex)//2][movey][0]==0: return True
 
     def moveRange(self, screen):
         x = self.x * constants.square_size
